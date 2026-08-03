@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>沃克斯坦自治区 - 布里吉斯 | 沃克斯坦生活电台</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --primary: #1a5276;
@@ -310,14 +309,9 @@
         </div>
     </div>
     <script>
-        // Supabase 配置
-        var SUPABASE_URL = 'https://tqtolwsdyqwwyvsnyzjo.supabase.co';
-        var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRxdG9sd3NkeXF3d3l2c255empvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2OTE0MDcsImV4cCI6MjA5NTI2NzQwN30.A0MqVaLwJ8-Yh-EYkCm3QAyV9W5zG19FlH-v8s8eJm8';
-        var db = null;
         var isAdmin = false;
         var editingId = null;
         var deletingId = null;
-        var useSupabase = false;
         var _memStore = {};
 
         // ===================== 安全配置 =====================
@@ -507,30 +501,54 @@
         }
 
         // ===================== 新闻、管理员、模态框逻辑 =====================
-        (function initSupabase() {
-            try {
-                if (SUPABASE_URL && SUPABASE_URL.indexOf('supabase.co') !== -1
-                    && SUPABASE_ANON_KEY && SUPABASE_ANON_KEY.indexOf('eyJ') === 0
-                    && typeof supabase !== 'undefined' && supabase.createClient) {
-                    db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                    useSupabase = true;
-                }
-            } catch(e) {}
-        })();
-
-        var defaultNews = [];
-
-        async function loadNewsFromSupabase() {
-            var result = await db.from('news').select('*').order('id', { ascending: false });
-            if (result.error) throw result.error;
-            return result.data || [];
-        }
+        var defaultNews = [
+            {
+                id: 1,
+                title: "沃克斯坦自治区宣告成立",
+                date: "2025年1月1日",
+                content: "沃克斯坦自治区在布里吉斯国家框架下正式设立。先驱者们划定了最初的行政区边界，建立了临时行政机构。这片土地从荒芜中起步，一个崭新的自治区由此诞生。",
+                pinned: true,
+                undeletable: true
+            },
+            {
+                id: 2,
+                title: "市政大楼竣工投用",
+                date: "2025年3月15日",
+                content: "沃克斯坦市政府大楼竣工并正式投入使用，标志着自治区行政管理体系的全面运转。市政委员会在此召开第一次全体会议，确立施政三大基石：秩序、建设、繁荣。",
+                pinned: true,
+                undeletable: true
+            },
+            {
+                id: 3,
+                title: "沃克斯坦自治区网站备份恢复版",
+                date: "2025年7月12日",
+                content: "此网站被开源在WalksteinSiteCCB仓库\n\n管理员密码：WALKSTEIN_IS_A_JOKING_CITY",
+                pinned: true,
+                undeletable: true
+            }
+        ];
 
         function loadNewsFromLocal() {
             var stored = safeGet('walkstein_news');
-            if (stored) { try { return JSON.parse(stored); } catch(e) {} }
-            safeSet('walkstein_news', JSON.stringify(defaultNews));
-            return defaultNews;
+            var arr = [];
+            if (stored) { try { arr = JSON.parse(stored); } catch(e) {} }
+
+            // 1. 从存储中过滤掉受保护新闻的旧副本（防止篡改）
+            var cleanArr = [];
+            for (var i = 0; i < arr.length; i++) {
+                if (arr[i].id !== 1 && arr[i].id !== 2 && arr[i].id !== 3) {
+                    cleanArr.push(arr[i]);
+                }
+            }
+
+            // 2. 用深拷贝的 defaultNews 重新注入（保证内容不可被修改）
+            for (var k = 0; k < defaultNews.length; k++) {
+                cleanArr.push(JSON.parse(JSON.stringify(defaultNews[k])));
+            }
+
+            // 3. 写回存储，确保 localStorage 也同步
+            safeSet('walkstein_news', JSON.stringify(cleanArr));
+            return cleanArr;
         }
 
         function saveNewsToLocal(data) {
@@ -538,10 +556,6 @@
         }
 
         async function loadNews() {
-            if (useSupabase) {
-                try { return await loadNewsFromSupabase(); }
-                catch(e) { return loadNewsFromLocal(); }
-            }
             return loadNewsFromLocal();
         }
 
@@ -568,17 +582,27 @@
                 container.innerHTML = '<div class="news-empty">暂无新闻</div>';
                 return;
             }
-            if (!useSupabase) newsArr = newsArr.slice().sort(function(a,b){ return b.id - a.id; });
+            // 排序：置顶(pinned)的排前面，再按 id 倒序
+            newsArr = newsArr.slice().sort(function(a, b) {
+                var aPin = a.pinned ? 1 : 0;
+                var bPin = b.pinned ? 1 : 0;
+                if (aPin !== bPin) return bPin - aPin; // pinned 在前
+                return b.id - a.id;
+            });
             var html = '';
             for (var i = 0; i < newsArr.length; i++) {
                 var item = newsArr[i];
+                var isUndeletable = item.undeletable === true;
+                var pinBadge = item.pinned ? ' <span style="font-size:0.75rem;color:#d4ac0d;font-weight:700;">[置顶]</span>' : '';
                 html += '<div class="news-item">'
-                    + '<h4>' + escapeHtml(item.title) + '</h4>'
+                    + '<h4>' + escapeHtml(item.title) + pinBadge + '</h4>'
                     + '<div class="news-date">' + escapeHtml(item.date) + '</div>'
-                    + '<div class="news-content">' + escapeHtml(item.content) + '</div>'
+                    + '<div class="news-content" style="white-space:pre-wrap;">' + escapeHtml(item.content) + '</div>'
                     + '<div class="news-actions ' + (isAdmin ? 'visible' : '') + '">'
                     + '<button class="news-btn news-btn-edit" onclick="openEditModal(' + item.id + ')">编辑</button>'
-                    + '<button class="news-btn news-btn-delete" onclick="openDeleteModal(' + item.id + ')">删除</button>'
+                    + (isUndeletable
+                        ? '<span style="font-size:0.8rem;color:#999;align-self:center;">不可删除</span>'
+                        : '<button class="news-btn news-btn-delete" onclick="openDeleteModal(' + item.id + ')">删除</button>')
                     + '</div></div>';
             }
             container.innerHTML = html;
@@ -699,6 +723,12 @@
         }
 
         async function openEditModal(id) {
+            // 受保护新闻禁止编辑
+            var protectedIds = [1, 2, 3];
+            if (protectedIds.indexOf(id) !== -1) {
+                alert('该新闻受保护，不可编辑。');
+                return;
+            }
             editingId = id;
             document.getElementById('editModalTitle').textContent = '编辑新闻';
             document.getElementById('editConfirmBtn').disabled = false;
@@ -781,38 +811,45 @@
             confirmBtn.textContent = '保存中...';
             var success = false;
 
-            if (useSupabase) {
-                try {
-                    var res;
-                    if (editingId !== null) {
-                        res = await db.from('news').update({ title: title, date: date, content: content }).eq('id', editingId);
-                    } else {
-                        res = await db.from('news').insert([{ title: title, date: date, content: content }]);
+            var localArr = loadNewsFromLocal();
+            var PROTECTED_IDS = [1, 2, 3];
+
+            if (editingId !== null) {
+                // 禁止修改受保护的新闻
+                if (PROTECTED_IDS.indexOf(editingId) !== -1) {
+                    confirmBtn.disabled = false;
+                    confirmBtn.textContent = '保存';
+                    closeModal('editModal');
+                    showStatus('该新闻受保护，不可修改', 'error');
+                    return;
+                }
+                for (var i = 0; i < localArr.length; i++) {
+                    if (localArr[i].id === editingId) {
+                        localArr[i].title = title;
+                        localArr[i].date = date;
+                        localArr[i].content = content;
+                        break;
                     }
-                    if (res.error) throw res.error;
-                    success = true;
-                } catch(e) { success = false; }
+                }
+            } else {
+                var maxId = 0;
+                for (var j = 0; j < localArr.length; j++) { if (localArr[j].id > maxId) maxId = localArr[j].id; }
+                // 新新闻 id 从 4 开始，避免与受保护新闻冲突
+                var newId = maxId >= 3 ? maxId + 1 : 4;
+                localArr.push({ id: newId, title: title, date: date, content: content });
             }
 
-            if (!useSupabase || !success) {
-                var localArr = loadNewsFromLocal();
-                if (editingId !== null) {
-                    for (var i = 0; i < localArr.length; i++) {
-                        if (localArr[i].id === editingId) {
-                            localArr[i].title = title;
-                            localArr[i].date = date;
-                            localArr[i].content = content;
-                            break;
-                        }
-                    }
-                } else {
-                    var maxId = 0;
-                    for (var j = 0; j < localArr.length; j++) { if (localArr[j].id > maxId) maxId = localArr[j].id; }
-                    localArr.push({ id: maxId + 1, title: title, date: date, content: content });
+            // 确保受保护新闻完整存在于数组中（防止被意外覆盖丢失）
+            for (var p = 0; p < defaultNews.length; p++) {
+                var exists = false;
+                for (var q = 0; q < localArr.length; q++) {
+                    if (localArr[q].id === defaultNews[p].id) { exists = true; break; }
                 }
-                saveNewsToLocal(localArr);
-                success = true;
+                if (!exists) localArr.push(defaultNews[p]);
             }
+
+            saveNewsToLocal(localArr);
+            success = true;
 
             confirmBtn.disabled = false;
             confirmBtn.textContent = '保存';
@@ -827,6 +864,14 @@
         }
 
         function openDeleteModal(id) {
+            // 检查是否为不可删除的新闻
+            var newsArr = loadNewsFromLocal();
+            for (var c = 0; c < newsArr.length; c++) {
+                if (newsArr[c].id === id && newsArr[c].undeletable) {
+                    alert('该新闻受保护，不可删除。');
+                    return;
+                }
+            }
             deletingId = id;
             document.getElementById('deleteConfirmBtn').disabled = false;
             document.getElementById('deleteConfirmBtn').textContent = '删除';
@@ -835,26 +880,31 @@
 
         async function confirmDelete() {
             if (deletingId === null) return;
+            // 二次校验：防止绕过弹窗直接调用
             var confirmBtn = document.getElementById('deleteConfirmBtn');
+            var localCheck = loadNewsFromLocal();
+            for (var c = 0; c < localCheck.length; c++) {
+                if (localCheck[c].id === deletingId && localCheck[c].undeletable) {
+                    confirmBtn.disabled = false;
+                    confirmBtn.textContent = '删除';
+                    deletingId = null;
+                    closeModal('deleteModal');
+                    showStatus('该新闻受保护，不可删除', 'error');
+                    return;
+                }
+            }
             confirmBtn.disabled = true;
             confirmBtn.textContent = '删除中...';
             var success = false;
-            if (useSupabase) {
-                try {
-                    var res = await db.from('news').delete().eq('id', deletingId);
-                    if (res.error) throw res.error;
-                    success = true;
-                } catch(e) { success = false; }
-            }
-            if (!useSupabase || !success) {
-                var localArr = loadNewsFromLocal();
-                var newArr = [];
-                for (var i = 0; i < localArr.length; i++) {
-                    if (localArr[i].id !== deletingId) newArr.push(localArr[i]);
+            var localArr = loadNewsFromLocal();
+            var newArr = [];
+            for (var i = 0; i < localArr.length; i++) {
+                if (localArr[i].id !== deletingId && !localArr[i].undeletable) {
+                    newArr.push(localArr[i]);
                 }
-                saveNewsToLocal(newArr);
-                success = true;
             }
+            saveNewsToLocal(newArr);
+            success = true;
             confirmBtn.disabled = false;
             confirmBtn.textContent = '删除';
             deletingId = null;
