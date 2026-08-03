@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>沃克斯坦自治区 - 布里吉斯 | 沃克斯坦生活电台</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --primary: #1a5276;
+            --primary-dark: #0e2f44;
+            --primary-light: #2980b9;
+            --accent: #d4ac0d;
+            --accent-light: #f1c40f;
+            --paper: #f4f1ea;
+            --dark: #1a1a1a;
+            --border: #ccc;
+            --radio-bg: #0f3047;
+            --radio-text: #f8f8f8;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Noto Serif SC', serif; background-color: var(--paper); color: var(--dark); line-height: 1.6; }
+        header { background-color: var(--primary); color: white; border-bottom: 4px solid var(--accent); position: sticky; top: 0; z-index: 100; }
+        .top-nav { display: flex; justify-content: space-between; padding: 8px 50px; font-size: 0.85rem; background-color: var(--primary-dark); font-family: 'Oswald', sans-serif; }
+        .main-header { display: flex; align-items: center; padding: 15px 50px; gap: 20px; }
+        .emblem { width: 60px; height: 60px; border: 3px solid var(--accent); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; font-weight: 900; color: var(--accent); background: var(--primary-dark); box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
+        .title-group h1 { font-size: 2rem; font-weight: 900; letter-spacing: 3px; }
+        .title-group p { font-size: 0.8rem; opacity: 0.9; font-family: 'Oswald', sans-serif; letter-spacing: 1px; }
+        nav { margin-left: auto; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+        nav a { color: white; text-decoration: none; font-weight: 700; font-size: 1rem; cursor: pointer; transition: color 0.2s; }
+        nav a:hover { color: var(--accent); }
+        main { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        .grid-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; margin-bottom: 40px; }
+        .hero { border-bottom: 2px solid var(--dark); padding-bottom: 20px; margin-bottom: 30px; }
+        .hero h2 { font-size: 2.5rem; color: var(--primary); margin-bottom: 10px; }
+        .hero p { font-size: 1.1rem; margin-bottom: 10px; }
+        .section-box { border: 1px solid var(--border); background: white; padding: 20px; margin-bottom: 30px; }
+        .section-title { font-size: 1.4rem; border-left: 6px solid var(--primary); padding-left: 12px; margin-bottom: 20px; font-weight: 900; display: flex; justify-content: space-between; align-items: center; }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .info-block h3 { font-size: 1.2rem; color: var(--primary-dark); margin-bottom: 10px; border-bottom: 1px solid #ddd; padding-bottom: 5px; }
+        .info-block p, .info-block li { font-size: 0.95rem; color: #333; margin-bottom: 8px; }
+        .info-block ul { padding-left: 20px; }
+        .banner-slogan { background: var(--primary); color: white; text-align: center; padding: 15px; margin: 40px 0; font-size: 1.4rem; font-weight: 700; letter-spacing: 2px; border-top: 2px solid var(--accent); border-bottom: 2px solid var(--accent); }
+        .timeline { position: relative; padding-left: 30px; border-left: 3px solid var(--primary-dark); margin-left: 10px; }
+        .timeline-item { margin-bottom: 20px; position: relative; }
+        .timeline-item::before { content: ''; position: absolute; left: -39px; top: 5px; width: 15px; height: 15px; background: var(--accent); border: 3px solid var(--primary-dark); border-radius: 50%; }
+        .timeline-date { font-family: 'Oswald', sans-serif; font-weight: 700; color: var(--primary-dark); font-size: 1.1rem; }
+        .timeline-content { font-size: 0.95rem; color: #333; }
+        .notice-board { background: var(--primary-dark); color: white; padding: 20px; }
+        .notice-board h3 { color: var(--accent); margin-bottom: 10px; font-size: 1.2rem; }
+        .notice-board ul { list-style: none; padding-left: 10px; }
+        .notice-board li { margin-bottom: 8px; font-size: 0.9rem; }
+        .news-item { border-bottom: 1px solid #ddd; padding: 15px 0; }
+        .news-item:last-child { border-bottom: none; }
+        .news-item h4 { font-size: 1.15rem; color: var(--primary-dark); margin-bottom: 5px; }
+        .news-item .news-date { font-size: 0.8rem; color: #999; font-family: 'Oswald', sans-serif; margin-bottom: 8px; }
+        .news-item .news-content { font-size: 0.95rem; color: #333; white-space: pre-wrap; }
+        .news-item .news-actions { margin-top: 10px; display: none; gap: 8px; }
+        .news-item .news-actions.visible { display: flex; }
+        .news-btn { padding: 4px 12px; font-size: 0.8rem; border: none; cursor: pointer; border-radius: 3px; font-family: 'Noto Serif SC', serif; transition: opacity 0.2s; }
+        .news-btn:hover { opacity: 0.8; }
+        .news-btn-edit { background: var(--accent); color: var(--dark); }
+        .news-btn-delete { background: #c0392b; color: white; }
+        .news-btn-add { background: var(--primary); color: white; padding: 8px 20px; font-size: 0.9rem; font-weight: 700; margin-bottom: 15px; }
+        .news-empty { text-align: center; color: #999; padding: 30px 0; font-size: 0.95rem; }
+        .news-loading { text-align: center; color: #999; padding: 30px 0; font-size: 0.95rem; }
+        .news-loading-spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid #ccc; border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; margin-left: 8px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .news-status { font-size: 0.8rem; padding: 6px 10px; border-radius: 3px; margin-bottom: 10px; display: none; }
+        .news-status.saving { display: block; background: #fff3cd; color: #856404; }
+        .news-status.success { display: block; background: #d4edda; color: #155724; }
+        .news-status.error { display: block; background: #f8d7da; color: #721c24; }
+
+        /* 字数计数器样式 */
+        .char-counter { font-size: 0.82rem; color: #888; margin-bottom: 12px; text-align: right; }
+        .char-counter.warning { color: #e67e22; font-weight: 700; }
+        .char-counter.danger { color: #c0392b; font-weight: 700; }
+        .char-counter.ok { color: #27ae60; }
+
+        .admin-login-btn { background: none; border: 1px solid rgba(255,255,255,0.4); color: rgba(255,255,255,0.7); padding: 4px 12px; cursor: pointer; font-size: 0.8rem; border-radius: 3px; font-family: 'Oswald', sans-serif; transition: all 0.2s; }
+        .admin-login-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .admin-login-btn.logged-in { border-color: #27ae60; color: #27ae60; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 200; justify-content: center; align-items: center; }
+        .modal-overlay.active { display: flex; }
+        .modal-box { background: white; padding: 30px; border-top: 4px solid var(--primary); max-width: 550px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+        .modal-box h3 { font-size: 1.3rem; color: var(--primary-dark); margin-bottom: 20px; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
+        .modal-box label { display: block; font-size: 0.9rem; font-weight: 700; margin-bottom: 5px; color: #555; }
+        .modal-box input, .modal-box textarea { width: 100%; padding: 8px 10px; border: 1px solid #ccc; font-family: 'Noto Serif SC', serif; font-size: 0.95rem; margin-bottom: 5px; }
+        .modal-box textarea { height: 120px; resize: vertical; }
+        .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 15px; }
+        .modal-actions button { padding: 8px 20px; border: none; cursor: pointer; font-family: 'Noto Serif SC', serif; font-weight: 700; font-size: 0.9rem; border-radius: 3px; }
+        .modal-cancel { background: #ddd; color: var(--dark); }
+        .modal-confirm { background: var(--primary); color: white; }
+        .modal-confirm:hover { background: var(--primary-dark); }
+        .modal-confirm:disabled { background: #999; cursor: not-allowed; }
+        .modal-error { color: #c0392b; font-size: 0.85rem; margin-bottom: 10px; display: none; }
+        .field-error { color: #c0392b; font-size: 0.82rem; margin-bottom: 10px; display: none; }
+        .field-error.visible { display: block; }
+        footer { background: var(--dark); color: #888; padding: 30px 50px; text-align: center; margin-top: 50px; border-top: 4px solid var(--accent); }
+
+        /* ===== 沃克斯坦生活电台专属样式 ===== */
+        #radio-section { background: var(--radio-bg); color: var(--radio-text); border: none; }
+        .radio-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .radio-logo { width: 50px; height: 50px; background: var(--accent); border-radius: 8px; display: grid; place-items: center; font-weight: 900; font-size: 1.5rem; color: var(--radio-bg); }
+        .radio-title h3 { font-size: 1.6rem; color: var(--accent-light); }
+        .radio-title p { opacity: 0.8; font-size: 0.9rem; }
+        .radio-player { display: grid; grid-template-columns: auto 1fr auto; gap: 20px; align-items: center; background: rgba(255,255,255,0.08); padding: 18px; border-radius: 10px; margin-bottom: 20px; }
+        .radio-control-buttons button { width: 48px; height: 48px; border-radius: 50%; border: none; background: var(--accent); color: #000; font-size: 1.3rem; cursor: pointer; font-weight: bold; }
+        .radio-control-buttons button:hover { background: var(--accent-light); }
+        .radio-info h4 { font-size: 1.2rem; margin-bottom: 6px; color: #fff; }
+        .radio-info .next-program { font-size: 0.9rem; opacity: 0.7; }
+        .radio-countdown { margin-top: 8px; color: var(--accent-light); font-family: Oswald; }
+        .radio-volume { display: flex; align-items: center; gap: 10px; }
+        .radio-volume input { width: 100px; }
+        .radio-tips { display: flex; gap: 15px; flex-wrap: wrap; margin-top:15px; }
+        .radio-tag { padding: 5px 12px; border:1px solid rgba(255,255,255,0.3); border-radius:20px; font-size:0.85rem; }
+        .radio-broadcast-alert { position: fixed; top: 80px; right:20px; background: var(--accent-light); color:#000; padding:15px 22px; border-radius:8px; box-shadow:0 4px 12px #0004; z-index:101; display:none; animation: slideIn 0.3s ease; }
+        @keyframes slideIn { from { transform: translateX(120%); opacity:0; } to { transform: translateX(0); opacity:1; } }
+
+        @media (max-width: 768px) {
+            .grid-2, .info-grid { grid-template-columns: 1fr; }
+            .main-header { flex-direction: column; padding: 15px; }
+            nav { flex-wrap: wrap; justify-content: center; margin: 10px 0 0 0; }
+            .banner-slogan { font-size: 1.1rem; }
+            .top-nav { padding: 8px 15px; font-size: 0.75rem; }
+            .radio-player { grid-template-columns: 1fr; gap:12px; }
+            .radio-volume { justify-content: flex-start; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="top-nav">
+            <span>沃克斯坦自治区 // 属于布里吉斯</span>
+            <span>系统状态: 在线 | 行政运转: 正常</span>
+        </div>
+        <div class="main-header">
+            <div class="emblem">W</div>
+            <div class="title-group">
+                <h1>沃克斯坦自治区</h1>
+                <p>WALKSTEIN AUTONOMOUS REGION — BRIDGIS</p>
+            </div>
+            <nav>
+                <a href="#home">首页</a>
+                <a href="#about">自治区概况</a>
+                <a href="#history">发展历程</a>
+                <a href="#radio">生活电台</a>
+                <a href="#news">新闻</a>
+                <button class="admin-login-btn" id="adminBtn" onclick="handleAdminBtn()">管理员登录</button>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <section id="home" class="hero">
+            <h2>沃克斯坦，新秩序的起点</h2>
+            <p>沃克斯坦自治区是布里吉斯国家框架下设立的地方自治行政单位。在这片土地上，我们以务实与秩序为核心，致力于建设一个稳定、繁荣、可持续发展的社区。</p>
+            <p>自治区遵循布里吉斯中央政府的基本法律框架，同时享有地方行政管理权限。每一位居民都是沃克斯坦的建设者，每一座建筑都是我们共同努力的见证。</p>
+        </section>
+        <div class="banner-slogan">秩序、建设、繁荣——沃克斯坦的三大基石</div>
+
+        <!-- 沃克斯坦生活电台区块 -->
+        <section id="radio" class="section-box" id="radio-section">
+            <div class="radio-header">
+                <div class="radio-logo">R</div>
+                <div class="radio-title">
+                    <h3>沃克斯坦生活电台</h3>
+                    <p>全球UTC时间同步直播｜轻音乐长篇小说轮播｜每小时整点官方新闻快报</p>
+                </div>
+            </div>
+            <div class="radio-player">
+                <div class="radio-control-buttons">
+                    <button id="radioPlayBtn" onclick="toggleRadioPlay()">▶</button>
+                </div>
+                <div class="radio-info">
+                    <h4 id="radioNowTitle">同步节目加载中...</h4>
+                    <div class="next-program" id="radioNextText">下一档：自动匹配全球统一小说章节</div>
+                    <div class="radio-countdown" id="radioCountdown">距离整点新闻播报：计算中</div>
+                </div>
+                <div class="radio-volume">
+                    <span>音量</span>
+                    <input type="range" min="0" max="100" value="70" id="radioVolumeSlider" oninput="setRadioVolume(this.value)">
+                </div>
+            </div>
+            <div class="radio-tips">
+                <span class="radio-tag">24小时不间断直播</span>
+                <span class="radio-tag">全球多设备播放完全同步</span>
+                <span class="radio-tag">常态：长篇小说+纯音乐</span>
+                <span class="radio-tag">仅整点播报官方新闻</span>
+                <span class="radio-tag">真人化自然朗读，低机械感</span>
+            </div>
+        </section>
+
+        <section id="about" class="section-box">
+            <div class="section-title"><span>自治区概况</span></div>
+            <div class="info-grid">
+                <div class="info-block">
+                    <h3>基本情况</h3>
+                    <p><strong>名称：</strong>沃克斯坦自治区</p>
+                    <p><strong>所属国家：</strong>布里吉斯（Bridgis）</p>
+                    <p><strong>行政地位：</strong>地方自治行政区</p>
+                    <p><strong>管理体制：</strong>自治区市政委员会</p>
+                    <p><strong>发展方向：</strong>交通枢纽与行政中心</p>
+                </div>
+                <div class="info-block">
+                    <h3>核心施政方针</h3>
+                    <ul>
+                        <li>在布里吉斯国家框架下行使地方自治权，维护区域稳定。</li>
+                        <li>优先发展交通基础设施，打造区域性铁路枢纽。</li>
+                        <li>完善行政管理体系，保障公共服务高效运转。</li>
+                        <li>鼓励居民参与建设，共同营造有序的社区环境。</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section id="history" class="section-box">
+            <div class="section-title"><span>发展历程</span></div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-date">第一阶段 · 沃克斯坦设立</div>
+                    <div class="timeline-content">在布里吉斯国家框架下，沃克斯坦自治区正式设立。这片土地从荒芜中起步，先驱者们划定了行政区边界，建立了最初的据点与临时行政机构。沃克斯坦的名字从此被标注在地图之上，一个崭新的自治区由此诞生。</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">第二阶段 · 基础建设</div>
+                    <div class="timeline-content">自治区进入大规模基础设施建设阶段。道路网络初步铺设，居民区开始规划，基本的生活保障设施逐步到位。沃克斯坦从一片空地逐渐发展为具备基本功能的居住点，人口开始稳步增长。</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">第三阶段 · 行政完善</div>
+                    <div class="timeline-content">沃克斯坦市政府大楼竣工并投入使用，标志着自治区行政管理体系的正式运转。与此同时，火车站项目启动建设，沃克斯坦正积极接入布里吉斯国家主铁路网络，迈向区域交通枢纽的战略目标。</div>
+                </div>
+            </div>
+        </section>
+        <div class="banner-slogan">建设沃克斯坦，共创布里吉斯的明天</div>
+        <section id="news" class="section-box">
+            <div class="section-title"><span>自治区新闻</span></div>
+            <div id="newsStatus" class="news-status"></div>
+            <div id="newsAdminBar" style="display:none; margin-bottom:15px;">
+                <button class="news-btn news-btn-add" onclick="openAddModal()">+ 发布新闻</button>
+            </div>
+            <div id="newsList">
+                <div class="news-loading">正在加载新闻<span class="news-loading-spinner"></span></div>
+            </div>
+        </section>
+        <div class="notice-board" style="margin-top: 30px;">
+            <h3>自治区通告</h3>
+            <ul>
+                <li>1. 沃克斯坦火车站正在建设中，请居民注意施工区域安全。</li>
+                <li>2. 市政府已正式办公，各类行政事务请前往市政大厅办理。</li>
+                <li>3. 境内建筑受自治区保护，未经许可不得擅自拆除或改建。</li>
+                <li>4. 遵守布里吉斯国家法律，维护自治区公共秩序。</li>
+            </ul>
+        </div>
+    </main>
+    <!-- 整点播报弹窗 -->
+    <div class="radio-broadcast-alert" id="radioAlertBox">
+        <strong>📻 沃克斯坦生活电台｜整点新闻快报</strong>
+        <div id="radioAlertText">正在朗读自治区最新官方新闻</div>
+    </div>
+    <footer>
+        <p>© 沃克斯坦自治区市政委员会 | 属于布里吉斯</p>
+        <p>本网站由沃克斯坦市政厅信息办公室发布 | 维护秩序，建设未来</p>
+        <p style="margin-top:8px;">沃克斯坦生活电台 · UTC全球同步24小时广播服务</p>
+    </footer>
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-box">
+            <h3>管理员登录</h3>
+            <label for="loginPwd">密码</label>
+            <input type="password" id="loginPwd" placeholder="请输入管理员密码">
+            <div class="modal-error" id="loginError">密码错误，请重试。</div>
+            <div id="loginImageBox" style="display:none; margin: 10px 0; text-align: center;">
+                <img id="loginImage" src="屏幕截图 2026-08-03 165353.png" alt="" style="max-width: 100%; border-radius: 8px; border: 2px solid #c0392b;">
+            </div>
+            <div class="modal-actions">
+                <button class="modal-cancel" onclick="closeModal('loginModal')">取消</button>
+                <button class="modal-confirm" onclick="doLogin()">登录</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal-overlay" id="editModal">
+        <div class="modal-box">
+            <h3 id="editModalTitle">发布新闻</h3>
+            <label for="newsTitleInput">标题（最多35字）</label>
+            <input type="text" id="newsTitleInput" placeholder="新闻标题" maxlength="35">
+            <div class="char-counter" id="titleCounter">0 / 35</div>
+            <div class="field-error" id="titleError">标题不能为空且不超过35字</div>
+
+            <label for="newsDateInput">日期（格式：YYYY年MM月DD日 或 YYYY-MM-DD）</label>
+            <input type="text" id="newsDateInput" placeholder="例：2025年7月12日 或 2025-07-12">
+            <div class="field-error" id="dateError">日期格式不正确，请使用"YYYY年MM月DD日"或"YYYY-MM-DD"</div>
+
+            <label for="newsContentInput">内容（最多600字）</label>
+            <textarea id="newsContentInput" placeholder="新闻正文内容..." maxlength="600"></textarea>
+            <div class="char-counter" id="contentCounter">0 / 600</div>
+            <div class="field-error" id="contentError">内容不能为空且不超过600字</div>
+
+            <div class="modal-actions">
+                <button class="modal-cancel" onclick="closeModal('editModal')">取消</button>
+                <button class="modal-confirm" id="editConfirmBtn" onclick="saveNews()">保存</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal-box">
+            <h3>确认删除</h3>
+            <p style="margin-bottom:20px; color:#555;">确定要删除这条新闻吗？此操作不可撤销。</p>
+            <div class="modal-actions">
+                <button class="modal-cancel" onclick="closeModal('deleteModal')">取消</button>
+                <button class="modal-confirm" id="deleteConfirmBtn" onclick="confirmDelete()" style="background:#c0392b;">删除</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Supabase 配置
+        var SUPABASE_URL = 'https://tqtolwsdyqwwyvsnyzjo.supabase.co';
+        var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRxdG9sd3NkeXF3d3l2c255empvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2OTE0MDcsImV4cCI6MjA5NTI2NzQwN30.A0MqVaLwJ8-Yh-EYkCm3QAyV9W5zG19FlH-v8s8eJm8';
+        var db = null;
+        var isAdmin = false;
+        var editingId = null;
+        var deletingId = null;
+        var useSupabase = false;
+        var _memStore = {};
+
+        // ===================== 安全配置 =====================
+        // 管理员密码哈希（SHA-256）
+        // 当前密码: WALKSTEIN_IS_A_JOKING_CITY
+        // 如需修改密码，请在浏览器控制台执行：await sha256("你的新密码")，将结果替换下方哈希
+        var ADMIN_PASSWORD_HASH = 'a9f83c8b0eaaa8c47ac7de1e53a77764e202d6db165ab5895036f09eee4da185';
+
+        // 弱密码"1111"触发显示的图片
+        var WEAK_PASSWORD_IMAGE = '屏幕截图 2026-08-03 165353.png';
+
+        // 新闻字数限制常量
+        var MAX_TITLE_LENGTH = 35;
+        var MAX_CONTENT_LENGTH = 600;
+
+        // 日期格式正则（支持两种格式）
+        var DATE_REGEX_CN = /^\d{4}年\d{1,2}月\d{1,2}日$/;
+        var DATE_REGEX_DASH = /^\d{4}-\d{2}-\d{2}$/;
+
+        // ===================== SHA-256 哈希函数 =====================
+        async function sha256(message) {
+            var msgBuffer = new TextEncoder().encode(message);
+            var hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            var hashArray = Array.from(new Uint8Array(hashBuffer));
+            var hashHex = hashArray.map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+            return hashHex;
+        }
+
+        // ===================== 工具函数 =====================
+        function safeGet(key) { try { return localStorage.getItem(key); } catch(e) { return _memStore[key] || null; } }
+        function safeSet(key, val) { try { localStorage.setItem(key, val); } catch(e) { _memStore[key] = val; } }
+        function safeRemove(key) { try { localStorage.removeItem(key); } catch(e) { delete _memStore[key]; } }
+        function sleep(ms) { return new Promise(function(resolve) { setTimeout(resolve, ms); }); }
+
+        // 获取UTC全局偏移
+        function getGlobalUTCOffset() {
+            var now = new Date();
+            var utcSeconds = Math.floor(now.getTime() / 1000);
+            return utcSeconds % globalCycleSeconds;
+        }
+
+        // ===================== 字数计数器 =====================
+        function updateCharCounter(inputId, counterId, maxLen) {
+            var input = document.getElementById(inputId);
+            var counter = document.getElementById(counterId);
+            var len = input.value.trim().length;
+            var ratio = len / maxLen;
+            counter.textContent = len + ' / ' + maxLen;
+            counter.className = 'char-counter';
+            if (len === 0) {
+                counter.classList.add('warning');
+            } else if (ratio >= 0.9) {
+                counter.classList.add('danger');
+            } else if (ratio >= 0.7) {
+                counter.classList.add('warning');
+            } else {
+                counter.classList.add('ok');
+            }
+        }
+
+        // ===================== 日期格式校验 =====================
+        function validateDate(dateStr) {
+            if (DATE_REGEX_CN.test(dateStr)) {
+                // 进一步校验日期合法性
+                var match = dateStr.match(/^(\d{4})年(\d{1,2})月(\d{1,2})日$/);
+                if (match) {
+                    var year = parseInt(match[1], 10);
+                    var month = parseInt(match[2], 10);
+                    var day = parseInt(match[3], 10);
+                    return isValidDate(year, month, day);
+                }
+            }
+            if (DATE_REGEX_DASH.test(dateStr)) {
+                var parts = dateStr.split('-');
+                var year = parseInt(parts[0], 10);
+                var month = parseInt(parts[1], 10);
+                var day = parseInt(parts[2], 10);
+                return isValidDate(year, month, day);
+            }
+            return false;
+        }
+
+        function isValidDate(year, month, day) {
+            if (year < 2020 || year > 2100) return false;
+            if (month < 1 || month > 12) return false;
+            var daysInMonth = [31, (isLeapYear(year) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            if (day < 1 || day > daysInMonth[month - 1]) return false;
+            return true;
+        }
+
+        function isLeapYear(year) {
+            return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+        }
+
+        // 自动格式化日期输入（用户输入时实时提示）
+        function formatDateInput(val) {
+            // 尝试将数字格式自动补全为规范格式
+            val = val.trim();
+            if (/^\d{8}$/.test(val)) {
+                // 20250712 -> 2025-07-12
+                return val.substring(0,4) + '-' + val.substring(4,6) + '-' + val.substring(6,8);
+            }
+            if (/^\d{4}\/\d{1,2}\/\d{1,2}$/.test(val)) {
+                // 2025/7/12 -> 2025-07-12
+                var p = val.split('/');
+                return p[0] + '-' + String(p[1]).padStart(2,'0') + '-' + String(p[2]).padStart(2,'0');
+            }
+            return val;
+        }
+
+        // ===================== 电台全局核心变量 =====================
+        let radioPlaying = false;
+        let radioVolume = 0.7;
+        let voiceNovel = null;
+        let voiceNews = null;
+        let countdownTimer = null;
+        let hourBroadcastLock = false;
+        let globalCycleSeconds = 14400;
+        const bgMusicList = [
+            new Audio("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"),
+            new Audio("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"),
+            new Audio("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3"),
+            new Audio("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3")
+        ];
+        let currentBgIndex = 0;
+        let currentBgAudio = bgMusicList[currentBgIndex];
+        currentBgAudio.loop = true;
+        const novelLibrary = [
+            {
+                title: "沃克斯坦先驱 · 第一章 荒原定居",
+                text: "许多年前，这片土地还只是一片无人踏足的荒原。远方的居民听闻布里吉斯中央政府规划新建自治区域，便收拾行囊，结伴向西迁徙。旅途漫长，道路泥泞，所有人都怀揣同一个愿望，建立一处秩序安稳、人人平等的新家园。抵达这片谷地时，天色已经昏暗，先驱者们点燃篝火，划定了最初的行政区边界。"
+            },
+            {
+                title: "沃克斯坦先驱 · 第二章 道路开垦",
+                text: "定居后的第一年，所有人合力开垦基础道路。没有大型机械，全靠人力挖掘、铺设碎石。白天劳作，夜晚围坐篝火商议社区规则。大家一致决定，优先规划居民区与公共用地，预留大片土地用于未来火车站建设，打通与全国路网的连接。"
+            },
+            {
+                title: "沃克斯坦先驱 · 第三章 市政落成",
+                text: "数年建设过后，市政大楼正式竣工。纯白墙体搭配深蓝色标识，成为整片区域的核心地标。自治委员会在此召开第一次全体会议，确立施政三大基石：秩序、建设、繁荣。从这天起，沃克斯坦正式拥有完整独立的地方行政管理体系。"
+            },
+            {
+                title: "沃克斯坦生活随笔 · 社区日常",
+                text: "如今走在沃克斯坦街道，随处可见平整道路与整洁民居。施工区域井然有序，居民自觉遵守公共规范。闲暇时人们会前往市政大厅咨询政策，或是散步观望正在施工的铁路站台。这座新城，正在一步一步兑现当年先驱者们的期许。"
+            }
+        ];
+        let currentNovelId = 0;
+        let novelSegmentOffset = 0;
+
+        // ===================== 初始化真人化人声 =====================
+        function initVoices() {
+            var voices = window.speechSynthesis.getVoices();
+            let softVoice = null;
+            let anchorVoice = null;
+            for (let v of voices) {
+                if (!v.lang.includes("zh-CN")) continue;
+                if (v.name.includes("晓晓") || v.name.includes("云汐") || v.name.includes("晓萱")) softVoice = v;
+                if (v.name.includes("云扬") || v.name.includes("沉稳") || v.name.includes("新闻播音")) anchorVoice = v;
+            }
+            if (!softVoice) softVoice = voices.find(function(v){ return v.lang.startsWith("zh"); }) || voices[0];
+            if (!anchorVoice) anchorVoice = softVoice;
+            voiceNovel = softVoice;
+            voiceNews = anchorVoice;
+        }
+        window.speechSynthesis.onvoiceschanged = initVoices;
+
+        function naturalTextProcess(rawText) {
+            let t = rawText;
+            t = t.replace(/，/g, "，  ");
+            t = t.replace(/。/g, "。    ");
+            t = t.replace(/；/g, "；  ");
+            t = t.replace(/：/g, "： ");
+            t = t.replace(/、/g, "、 ");
+            return t;
+        }
+
+        // ===================== 多背景音乐轮换切换 =====================
+        function switchBgMusicByGlobalOffset() {
+            var offset = getGlobalUTCOffset();
+            var singleMusicCycle = globalCycleSeconds / bgMusicList.length;
+            var newIdx = Math.floor(offset / singleMusicCycle) % bgMusicList.length;
+            if (newIdx !== currentBgIndex) {
+                currentBgAudio.pause();
+                currentBgIndex = newIdx;
+                currentBgAudio = bgMusicList[currentBgIndex];
+                currentBgAudio.volume = radioVolume * 0.32;
+                if (radioPlaying) currentBgAudio.play();
+            }
+        }
+
+        // ===================== 同步小说朗读逻辑 =====================
+        async function syncPlayNovel() {
+            if (!radioPlaying) return;
+            window.speechSynthesis.cancel();
+            switchBgMusicByGlobalOffset();
+            var offset = getGlobalUTCOffset();
+            var singleNovelTime = globalCycleSeconds / novelLibrary.length;
+            currentNovelId = Math.floor(offset / singleNovelTime) % novelLibrary.length;
+            var novel = novelLibrary[currentNovelId];
+            document.getElementById("radioNowTitle").innerText = "正在朗读：" + novel.title;
+            var utter = new SpeechSynthesisUtterance(naturalTextProcess(novel.text));
+            utter.voice = voiceNovel;
+            utter.rate = 0.88;
+            utter.pitch = 1.03;
+            utter.volume = radioVolume;
+            utter.onend = async function() {
+                await sleep(4500);
+                syncPlayNovel();
+            };
+            window.speechSynthesis.speak(utter);
+        }
+
+        // ===================== 整点新闻播报 =====================
+        async function hourNewsBroadcast() {
+            if (!radioPlaying || hourBroadcastLock) return;
+            hourBroadcastLock = true;
+            window.speechSynthesis.cancel();
+            currentBgAudio.volume = radioVolume * 0.12;
+            var alertBox = document.getElementById("radioAlertBox");
+            alertBox.style.display = "block";
+            var openUtter = new SpeechSynthesisUtterance("各位听众，现在进入沃克斯坦生活电台整点新闻快报时段，为您播报自治区最新官方资讯。");
+            openUtter.voice = voiceNews;
+            openUtter.rate = 0.93;
+            openUtter.pitch = 0.97;
+            openUtter.volume = radioVolume;
+            window.speechSynthesis.speak(openUtter);
+            await sleep(3000);
+            var newsArr = await loadNews();
+            if (newsArr.length === 0) {
+                var emptyUtter = new SpeechSynthesisUtterance("当前暂无更新的官方新闻，本次整点资讯播报内容为空。");
+                emptyUtter.voice = voiceNews;
+                window.speechSynthesis.speak(emptyUtter);
+                await sleep(3000);
+            } else {
+                for (let i = 0; i < newsArr.length; i++) {
+                    var n = newsArr[i];
+                    var titleStr = "第" + (i+1) + "条新闻，标题：" + n.title + "，发布日期：" + n.date;
+                    var contentStr = "新闻详情：" + n.content;
+                    var tUtter = new SpeechSynthesisUtterance(naturalTextProcess(titleStr));
+                    tUtter.voice = voiceNews;
+                    tUtter.rate = 0.93;
+                    window.speechSynthesis.speak(tUtter);
+                    await sleep(titleStr.length * 180);
+                    var cUtter = new SpeechSynthesisUtterance(naturalTextProcess(contentStr));
+                    cUtter.voice = voiceNews;
+                    cUtter.rate = 0.91;
+                    window.speechSynthesis.speak(cUtter);
+                    await sleep(contentStr.length * 160);
+                    await sleep(1500);
+                }
+            }
+            var closeUtter = new SpeechSynthesisUtterance("本次整点新闻播报全部结束，接下来回到长篇小说与轻音乐节目。");
+            closeUtter.voice = voiceNews;
+            window.speechSynthesis.speak(closeUtter);
+            await sleep(2800);
+            currentBgAudio.volume = radioVolume * 0.32;
+            alertBox.style.display = "none";
+            hourBroadcastLock = false;
+            syncPlayNovel();
+        }
+
+        // ===================== 全局倒计时+整点检测 =====================
+        function startGlobalCountdown() {
+            clearInterval(countdownTimer);
+            countdownTimer = setInterval(function(){
+                var now = new Date();
+                var min = now.getMinutes();
+                var sec = now.getSeconds();
+                var remMin = 59 - min;
+                var remSec = 60 - sec;
+                document.getElementById("radioCountdown").innerText = "距离整点新闻播报：" + remMin + "分" + remSec + "秒";
+                if (min === 0 && sec <= 3 && !hourBroadcastLock) {
+                    hourNewsBroadcast();
+                }
+                if (min > 1) hourBroadcastLock = false;
+                switchBgMusicByGlobalOffset();
+            }, 1000);
+        }
+
+        // ===================== 播放/暂停总开关 =====================
+        function toggleRadioPlay() {
+            radioPlaying = !radioPlaying;
+            var btn = document.getElementById("radioPlayBtn");
+            if (radioPlaying) {
+                btn.innerText = "⏸";
+                currentBgAudio.volume = radioVolume * 0.32;
+                currentBgAudio.play();
+                startGlobalCountdown();
+                syncPlayNovel();
+            } else {
+                btn.innerText = "▶";
+                currentBgAudio.pause();
+                window.speechSynthesis.cancel();
+                clearInterval(countdownTimer);
+            }
+        }
+
+        function setRadioVolume(val) {
+            radioVolume = val / 100;
+            if (hourBroadcastLock) {
+                currentBgAudio.volume = radioVolume * 0.12;
+            } else {
+                currentBgAudio.volume = radioVolume * 0.32;
+            }
+        }
+
+        // ===================== 新闻、管理员、模态框逻辑 =====================
+        (function initSupabase() {
+            try {
+                if (SUPABASE_URL && SUPABASE_URL.indexOf('supabase.co') !== -1
+                    && SUPABASE_ANON_KEY && SUPABASE_ANON_KEY.indexOf('eyJ') === 0
+                    && typeof supabase !== 'undefined' && supabase.createClient) {
+                    db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                    useSupabase = true;
+                }
+            } catch(e) {}
+        })();
+
+        var defaultNews = [];
+
+        async function loadNewsFromSupabase() {
+            var result = await db.from('news').select('*').order('id', { ascending: false });
+            if (result.error) throw result.error;
+            return result.data || [];
+        }
+
+        function loadNewsFromLocal() {
+            var stored = safeGet('walkstein_news');
+            if (stored) { try { return JSON.parse(stored); } catch(e) {} }
+            safeSet('walkstein_news', JSON.stringify(defaultNews));
+            return defaultNews;
+        }
+
+        function saveNewsToLocal(data) {
+            safeSet('walkstein_news', JSON.stringify(data));
+        }
+
+        async function loadNews() {
+            if (useSupabase) {
+                try { return await loadNewsFromSupabase(); }
+                catch(e) { return loadNewsFromLocal(); }
+            }
+            return loadNewsFromLocal();
+        }
+
+        function escapeHtml(text) {
+            var div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function showStatus(msg, type) {
+            var el = document.getElementById('newsStatus');
+            el.textContent = msg;
+            el.className = 'news-status ' + type;
+            if (type !== 'saving') setTimeout(function(){ el.className = 'news-status'; }, 3000);
+        }
+
+        async function renderNews() {
+            var container = document.getElementById('newsList');
+            container.innerHTML = '<div class="news-loading">正在加载新闻<span class="news-loading-spinner"></span></div>';
+            var newsArr;
+            try { newsArr = await loadNews(); }
+            catch(e) { container.innerHTML = '<div class="news-empty">加载新闻失败，请刷新重试。</div>'; return; }
+            if (!newsArr || newsArr.length === 0) {
+                container.innerHTML = '<div class="news-empty">暂无新闻</div>';
+                return;
+            }
+            if (!useSupabase) newsArr = newsArr.slice().sort(function(a,b){ return b.id - a.id; });
+            var html = '';
+            for (var i = 0; i < newsArr.length; i++) {
+                var item = newsArr[i];
+                html += '<div class="news-item">'
+                    + '<h4>' + escapeHtml(item.title) + '</h4>'
+                    + '<div class="news-date">' + escapeHtml(item.date) + '</div>'
+                    + '<div class="news-content">' + escapeHtml(item.content) + '</div>'
+                    + '<div class="news-actions ' + (isAdmin ? 'visible' : '') + '">'
+                    + '<button class="news-btn news-btn-edit" onclick="openEditModal(' + item.id + ')">编辑</button>'
+                    + '<button class="news-btn news-btn-delete" onclick="openDeleteModal(' + item.id + ')">删除</button>'
+                    + '</div></div>';
+            }
+            container.innerHTML = html;
+        }
+
+        // ===================== 管理员登录（SHA-256 哈希验证） =====================
+        function handleAdminBtn() {
+            if (isAdmin) {
+                isAdmin = false;
+                safeRemove('walkstein_admin');
+                updateAdminUI();
+                renderNews();
+                return;
+            }
+            document.getElementById('loginPwd').value = '';
+            document.getElementById('loginError').style.display = 'none';
+            openModal('loginModal');
+            setTimeout(function(){ document.getElementById('loginPwd').focus(); }, 100);
+        }
+
+        async function doLogin() {
+            var pwd = document.getElementById('loginPwd').value;
+            var errorEl = document.getElementById('loginError');
+            var imageBox = document.getElementById('loginImageBox');
+            var imageEl = document.getElementById('loginImage');
+
+            // 隐藏上一次的错误图片
+            imageBox.style.display = 'none';
+            imageEl.src = '';
+
+            // 计算输入密码的 SHA-256 哈希
+            var inputHash = await sha256(pwd);
+
+            // ===== 弱密码 "1111" 特殊处理：显示图片 =====
+            // 1111 的 SHA-256: 0ffe1abd1a08215353c233d6e009613e95eec4253832a761af28ff37ac5a150c
+            var WEAK_HASH_1111 = '0ffe1abd1a08215353c233d6e009613e95eec4253832a761af28ff37ac5a150c';
+            if (inputHash === WEAK_HASH_1111) {
+                errorEl.textContent = '不准这样玩😡';
+                errorEl.style.display = 'block';
+                imageEl.src = WEAK_PASSWORD_IMAGE;
+                imageBox.style.display = 'block';
+                document.getElementById('loginPwd').value = '';
+                return;
+            }
+
+            // 防暴力破解：连续输错5次锁定60秒
+            var failCount = parseInt(safeGet('walkstein_login_fails') || '0', 10);
+            var lockUntil = parseInt(safeGet('walkstein_login_lock') || '0', 10);
+            var nowTs = Math.floor(Date.now() / 1000);
+
+            if (lockUntil > nowTs) {
+                var remain = lockUntil - nowTs;
+                errorEl.textContent = '账户已临时锁定，请 ' + remain + ' 秒后再试。';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            if (inputHash === ADMIN_PASSWORD_HASH) {
+                // 登录成功，清除失败记录
+                safeRemove('walkstein_login_fails');
+                safeRemove('walkstein_login_lock');
+                isAdmin = true;
+                safeSet('walkstein_admin', '1');
+                closeModal('loginModal');
+                updateAdminUI();
+                renderNews();
+            } else {
+                // 登录失败，记录次数
+                failCount++;
+                safeSet('walkstein_login_fails', String(failCount));
+                if (failCount >= 5) {
+                    var lockTs = nowTs + 60;
+                    safeSet('walkstein_login_lock', String(lockTs));
+                    errorEl.textContent = '连续输错5次，账户已锁定60秒。';
+                } else {
+                    errorEl.textContent = '密码错误，请重试。（剩余尝试 ' + (5 - failCount) + ' 次）';
+                }
+                errorEl.style.display = 'block';
+                document.getElementById('loginPwd').value = '';
+            }
+        }
+
+        document.getElementById('loginPwd').addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
+
+        function updateAdminUI() {
+            var btn = document.getElementById('adminBtn');
+            var bar = document.getElementById('newsAdminBar');
+            if (isAdmin) {
+                btn.textContent = '退出管理';
+                btn.classList.add('logged-in');
+                bar.style.display = 'block';
+            } else {
+                btn.textContent = '管理员登录';
+                btn.classList.remove('logged-in');
+                bar.style.display = 'none';
+            }
+        }
+
+        // ===================== 新闻编辑模态框（含字数统计+日期格式化） =====================
+        function openAddModal() {
+            editingId = null;
+            document.getElementById('editModalTitle').textContent = '发布新闻';
+            document.getElementById('newsTitleInput').value = '';
+            document.getElementById('newsDateInput').value = '';
+            document.getElementById('newsContentInput').value = '';
+            document.getElementById('editConfirmBtn').disabled = false;
+            document.getElementById('editConfirmBtn').textContent = '保存';
+
+            // 隐藏所有错误提示
+            hideAllFieldErrors();
+
+            // 初始化计数器
+            updateCharCounter('newsTitleInput', 'titleCounter', MAX_TITLE_LENGTH);
+            updateCharCounter('newsContentInput', 'contentCounter', MAX_CONTENT_LENGTH);
+
+            openModal('editModal');
+            setTimeout(function(){ document.getElementById('newsTitleInput').focus(); }, 100);
+        }
+
+        async function openEditModal(id) {
+            editingId = id;
+            document.getElementById('editModalTitle').textContent = '编辑新闻';
+            document.getElementById('editConfirmBtn').disabled = false;
+            document.getElementById('editConfirmBtn').textContent = '保存';
+
+            hideAllFieldErrors();
+
+            var newsArr = await loadNews();
+            var item = null;
+            for (var i = 0; i < newsArr.length; i++) {
+                if (newsArr[i].id === id) { item = newsArr[i]; break; }
+            }
+            if (!item) { alert('找不到该新闻'); return; }
+            document.getElementById('newsTitleInput').value = item.title;
+            document.getElementById('newsDateInput').value = item.date;
+            document.getElementById('newsContentInput').value = item.content;
+
+            updateCharCounter('newsTitleInput', 'titleCounter', MAX_TITLE_LENGTH);
+            updateCharCounter('newsContentInput', 'contentCounter', MAX_CONTENT_LENGTH);
+
+            openModal('editModal');
+        }
+
+        function hideAllFieldErrors() {
+            document.getElementById('titleError').classList.remove('visible');
+            document.getElementById('dateError').classList.remove('visible');
+            document.getElementById('contentError').classList.remove('visible');
+        }
+
+        function showFieldError(fieldId) {
+            document.getElementById(fieldId).classList.add('visible');
+        }
+
+        // ===================== 保存新闻（严格校验） =====================
+        async function saveNews() {
+            hideAllFieldErrors();
+
+            var title = document.getElementById('newsTitleInput').value.trim();
+            var date = document.getElementById('newsDateInput').value.trim();
+            var content = document.getElementById('newsContentInput').value.trim();
+
+            var hasError = false;
+
+            // 1. 标题校验
+            if (!title) {
+                showFieldError('titleError');
+                hasError = true;
+            } else if (title.length > MAX_TITLE_LENGTH) {
+                showFieldError('titleError');
+                hasError = true;
+            }
+
+            // 2. 日期校验（严格格式 + 合法性）
+            if (!date) {
+                showFieldError('dateError');
+                hasError = true;
+            } else {
+                // 尝试自动格式化
+                date = formatDateInput(date);
+                document.getElementById('newsDateInput').value = date;
+                if (!validateDate(date)) {
+                    showFieldError('dateError');
+                    hasError = true;
+                }
+            }
+
+            // 3. 内容校验
+            if (!content) {
+                showFieldError('contentError');
+                hasError = true;
+            } else if (content.length > MAX_CONTENT_LENGTH) {
+                showFieldError('contentError');
+                hasError = true;
+            }
+
+            if (hasError) return;
+
+            var confirmBtn = document.getElementById('editConfirmBtn');
+            confirmBtn.disabled = true;
+            confirmBtn.textContent = '保存中...';
+            var success = false;
+
+            if (useSupabase) {
+                try {
+                    var res;
+                    if (editingId !== null) {
+                        res = await db.from('news').update({ title: title, date: date, content: content }).eq('id', editingId);
+                    } else {
+                        res = await db.from('news').insert([{ title: title, date: date, content: content }]);
+                    }
+                    if (res.error) throw res.error;
+                    success = true;
+                } catch(e) { success = false; }
+            }
+
+            if (!useSupabase || !success) {
+                var localArr = loadNewsFromLocal();
+                if (editingId !== null) {
+                    for (var i = 0; i < localArr.length; i++) {
+                        if (localArr[i].id === editingId) {
+                            localArr[i].title = title;
+                            localArr[i].date = date;
+                            localArr[i].content = content;
+                            break;
+                        }
+                    }
+                } else {
+                    var maxId = 0;
+                    for (var j = 0; j < localArr.length; j++) { if (localArr[j].id > maxId) maxId = localArr[j].id; }
+                    localArr.push({ id: maxId + 1, title: title, date: date, content: content });
+                }
+                saveNewsToLocal(localArr);
+                success = true;
+            }
+
+            confirmBtn.disabled = false;
+            confirmBtn.textContent = '保存';
+            closeModal('editModal');
+
+            if (success) {
+                showStatus(editingId !== null ? '新闻已更新' : '新闻已发布', 'success');
+            } else {
+                showStatus('保存失败，请重试', 'error');
+            }
+            renderNews();
+        }
+
+        function openDeleteModal(id) {
+            deletingId = id;
+            document.getElementById('deleteConfirmBtn').disabled = false;
+            document.getElementById('deleteConfirmBtn').textContent = '删除';
+            openModal('deleteModal');
+        }
+
+        async function confirmDelete() {
+            if (deletingId === null) return;
+            var confirmBtn = document.getElementById('deleteConfirmBtn');
+            confirmBtn.disabled = true;
+            confirmBtn.textContent = '删除中...';
+            var success = false;
+            if (useSupabase) {
+                try {
+                    var res = await db.from('news').delete().eq('id', deletingId);
+                    if (res.error) throw res.error;
+                    success = true;
+                } catch(e) { success = false; }
+            }
+            if (!useSupabase || !success) {
+                var localArr = loadNewsFromLocal();
+                var newArr = [];
+                for (var i = 0; i < localArr.length; i++) {
+                    if (localArr[i].id !== deletingId) newArr.push(localArr[i]);
+                }
+                saveNewsToLocal(newArr);
+                success = true;
+            }
+            confirmBtn.disabled = false;
+            confirmBtn.textContent = '删除';
+            deletingId = null;
+            closeModal('deleteModal');
+            if (success) { showStatus('新闻已删除', 'success'); }
+            else { showStatus('删除失败，请重试', 'error'); }
+            renderNews();
+        }
+
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        var overlays = document.querySelectorAll('.modal-overlay');
+        for (var i = 0; i < overlays.length; i++) {
+            overlays[i].addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        }
+
+        // ===================== 输入框事件绑定（实时字数统计 + 日期自动格式化） =====================
+        document.getElementById('newsTitleInput').addEventListener('input', function() {
+            updateCharCounter('newsTitleInput', 'titleCounter', MAX_TITLE_LENGTH);
+            if (document.getElementById('titleError').classList.contains('visible')) {
+                document.getElementById('titleError').classList.remove('visible');
+            }
+        });
+
+        document.getElementById('newsContentInput').addEventListener('input', function() {
+            updateCharCounter('newsContentInput', 'contentCounter', MAX_CONTENT_LENGTH);
+            if (document.getElementById('contentError').classList.contains('visible')) {
+                document.getElementById('contentError').classList.remove('visible');
+            }
+        });
+
+        document.getElementById('newsDateInput').addEventListener('blur', function() {
+            var val = this.value.trim();
+            if (val) {
+                this.value = formatDateInput(val);
+            }
+        });
+
+        document.getElementById('newsDateInput').addEventListener('input', function() {
+            if (document.getElementById('dateError').classList.contains('visible')) {
+                document.getElementById('dateError').classList.remove('visible');
+            }
+        });
+
+        // ===================== 页面总初始化 =====================
+        (async function initPage() {
+            if (safeGet('walkstein_admin') === '1') isAdmin = true;
+            updateAdminUI();
+            renderNews();
+            initVoices();
+            setTimeout(function(){
+                toggleRadioPlay();
+            }, 1000);
+        })();
+    </script>
+</body>
+</html>
