@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>共产国际 - Fishport 服务器</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --red: #CC0000;
+            --dark-red: #8B0000;
+            --pure-red: #FF0000;
+            --gold: #FFD700;
+            --paper: #f4f1ea;
+            --dark: #1a1a1a;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Noto Serif SC', serif; background-color: var(--paper); color: var(--dark); line-height: 1.6; }
+        
+        header { background-color: var(--red); color: white; border-bottom: 4px solid var(--gold); position: sticky; top: 0; z-index: 100; }
+        .top-nav { display: flex; justify-content: space-between; padding: 8px 50px; font-size: 0.85rem; background-color: var(--dark-red); font-family: 'Oswald', sans-serif; }
+        .main-header { display: flex; align-items: center; padding: 15px 50px; gap: 20px; }
+        .flag { width: 90px; height: 60px; background-color: var(--pure-red); box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
+        .title-group h1 { font-size: 2rem; font-weight: 900; letter-spacing: 3px; }
+        .title-group p { font-size: 0.8rem; opacity: 0.9; font-family: 'Oswald', sans-serif; }
+        nav { margin-left: auto; display: flex; align-items: center; gap: 20px; }
+        nav a { color: white; text-decoration: none; font-weight: 700; font-size: 1rem; cursor: pointer; transition: color 0.2s; }
+        nav a:hover { color: var(--gold); }
+        
+        main { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        .grid-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; margin-bottom: 40px; }
+        
+        .hero { border-bottom: 2px solid var(--dark); padding-bottom: 20px; margin-bottom: 30px; }
+        .hero h2 { font-size: 2.5rem; color: var(--red); margin-bottom: 10px; }
+        .hero p { font-size: 1.1rem; margin-bottom: 10px; }
+        
+        .section-box { border: 1px solid #ccc; background: white; padding: 20px; margin-bottom: 30px; }
+        .section-title { font-size: 1.4rem; border-left: 6px solid var(--red); padding-left: 12px; margin-bottom: 20px; font-weight: 900; display: flex; justify-content: space-between; align-items: center; }
+        
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .info-block h3 { font-size: 1.2rem; color: var(--dark-red); margin-bottom: 10px; border-bottom: 1px solid #ddd; padding-bottom: 5px; }
+        .info-block p, .info-block li { font-size: 0.95rem; color: #333; margin-bottom: 8px; }
+        .info-block ul { padding-left: 20px; }
+
+        .banner-slogan { background: var(--red); color: white; text-align: center; padding: 15px; margin: 40px 0; font-size: 1.4rem; font-weight: 700; letter-spacing: 2px; border-top: 2px solid var(--gold); border-bottom: 2px solid var(--gold); }
+
+        .timeline { position: relative; padding-left: 30px; border-left: 3px solid var(--dark-red); margin-left: 10px; }
+        .timeline-item { margin-bottom: 20px; position: relative; }
+        .timeline-item::before { content: ''; position: absolute; left: -39px; top: 5px; width: 15px; height: 15px; background: var(--gold); border: 3px solid var(--dark-red); border-radius: 50%; }
+        .timeline-date { font-family: 'Oswald', sans-serif; font-weight: 700; color: var(--dark-red); font-size: 1.1rem; }
+        .timeline-content { font-size: 0.95rem; color: #333; }
+
+        .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .gallery-item { border: 1px solid #ccc; background: white; padding: 8px; }
+        .gallery-item img { width: 100%; height: 180px; object-fit: cover; filter: contrast(1.05); }
+        .gallery-item p { font-size: 0.85rem; margin-top: 5px; color: #444; }
+        
+        .recruit-card { background: var(--dark); color: white; padding: 30px; text-align: center; border-top: 6px solid var(--gold); }
+        .recruit-card h3 { color: var(--gold); font-size: 1.8rem; margin-bottom: 15px; }
+        .recruit-card p { margin-bottom: 20px; font-size: 1rem; opacity: 0.9; }
+        .qq-box { background: var(--pure-red); display: inline-block; padding: 15px 30px; border-radius: 4px; cursor: pointer; transition: transform 0.2s; }
+        .qq-box:hover { transform: scale(1.05); }
+        .qq-box span { font-size: 1.5rem; font-weight: 900; color: white; font-family: 'Oswald', sans-serif; letter-spacing: 2px; }
+        .qq-hint { font-size: 0.8rem; color: #aaa; margin-top: 10px; }
+        
+        .notice-board { background: var(--dark-red); color: white; padding: 20px; }
+        .notice-board h3 { color: var(--gold); margin-bottom: 10px; font-size: 1.2rem; }
+        .notice-board ul { list-style: none; padding-left: 10px; }
+        .notice-board li { margin-bottom: 8px; font-size: 0.9rem; }
+
+        .news-item { border-bottom: 1px solid #ddd; padding: 15px 0; }
+        .news-item:last-child { border-bottom: none; }
+        .news-item h4 { font-size: 1.15rem; color: var(--dark-red); margin-bottom: 5px; }
+        .news-item .news-date { font-size: 0.8rem; color: #999; font-family: 'Oswald', sans-serif; margin-bottom: 8px; }
+        .news-item .news-content { font-size: 0.95rem; color: #333; white-space: pre-wrap; }
+        .news-item .news-actions { margin-top: 10px; display: none; gap: 8px; }
+        .news-item .news-actions.visible { display: flex; }
+        .news-btn { padding: 4px 12px; font-size: 0.8rem; border: none; cursor: pointer; border-radius: 3px; font-family: 'Noto Serif SC', serif; transition: opacity 0.2s; }
+        .news-btn:hover { opacity: 0.8; }
+        .news-btn-edit { background: var(--gold); color: var(--dark); }
+        .news-btn-delete { background: #c0392b; color: white; }
+        .news-btn-add { background: var(--red); color: white; padding: 8px 20px; font-size: 0.9rem; font-weight: 700; margin-bottom: 15px; }
+        .news-empty { text-align: center; color: #999; padding: 30px 0; font-size: 0.95rem; }
+        .news-loading { text-align: center; color: #999; padding: 30px 0; font-size: 0.95rem; }
+        .news-loading-spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid #ccc; border-top-color: var(--red); border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; margin-left: 8px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .news-status { font-size: 0.8rem; padding: 6px 10px; border-radius: 3px; margin-bottom: 10px; display: none; }
+        .news-status.saving { display: block; background: #fff3cd; color: #856404; }
+        .news-status.success { display: block; background: #d4edda; color: #155724; }
+        .news-status.error { display: block; background: #f8d7da; color: #721c24; }
+
+        .admin-login-btn { background: none; border: 1px solid rgba(255,255,255,0.4); color: rgba(255,255,255,0.7); padding: 4px 12px; cursor: pointer; font-size: 0.8rem; border-radius: 3px; font-family: 'Oswald', sans-serif; transition: all 0.2s; }
+        .admin-login-btn:hover { border-color: var(--gold); color: var(--gold); }
+        .admin-login-btn.logged-in { border-color: #27ae60; color: #27ae60; }
+
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 200; justify-content: center; align-items: center; }
+        .modal-overlay.active { display: flex; }
+        .modal-box { background: white; padding: 30px; border-top: 4px solid var(--red); max-width: 500px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+        .modal-box h3 { font-size: 1.3rem; color: var(--dark-red); margin-bottom: 20px; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
+        .modal-box label { display: block; font-size: 0.9rem; font-weight: 700; margin-bottom: 5px; color: #555; }
+        .modal-box input, .modal-box textarea { width: 100%; padding: 8px 10px; border: 1px solid #ccc; font-family: 'Noto Serif SC', serif; font-size: 0.95rem; margin-bottom: 15px; }
+        .modal-box textarea { height: 120px; resize: vertical; }
+        .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px; }
+        .modal-actions button { padding: 8px 20px; border: none; cursor: pointer; font-family: 'Noto Serif SC', serif; font-weight: 700; font-size: 0.9rem; border-radius: 3px; }
+        .modal-cancel { background: #ddd; color: var(--dark); }
+        .modal-confirm { background: var(--red); color: white; }
+        .modal-confirm:hover { background: var(--dark-red); }
+        .modal-confirm:disabled { background: #999; cursor: not-allowed; }
+        .modal-error { color: #c0392b; font-size: 0.85rem; margin-bottom: 10px; display: none; }
+
+        footer { background: var(--dark); color: #888; padding: 30px 50px; text-align: center; margin-top: 50px; border-top: 4px solid var(--gold); }
+        
+        @media (max-width: 768px) {
+            .grid-2, .info-grid { grid-template-columns: 1fr; }
+            .main-header { flex-direction: column; padding: 15px; }
+            nav { flex-wrap: wrap; justify-content: center; margin: 10px 0 0 0; }
+            .gallery-grid { grid-template-columns: 1fr; }
+            .banner-slogan { font-size: 1.1rem; }
+            .top-nav { padding: 8px 15px; font-size: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="top-nav">
+            <span>FISHPORT SERVER // 国际频道</span>
+            <span>系统状态: 在线 | 生产模式: 持续中</span>
+        </div>
+        <div class="main-header">
+            <div class="flag"></div>
+            <div class="title-group">
+                <h1>共产国际</h1>
+                <p>COMMUNIST INTERNATIONAL</p>
+            </div>
+            <nav>
+                <a href="#home">首页</a>
+                <a href="#about">国家概况</a>
+                <a href="#history">编年史</a>
+                <a href="#news">新闻</a>
+                <a href="#gallery">建设成就</a>
+                <a href="#join">加入我们</a>
+                <button class="admin-login-btn" id="adminBtn" onclick="handleAdminBtn()">管理员登录</button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+            <h2>全服无产者，联合起来！</h2>
+            <p>在Fishport服务器的广袤方块世界中，共产国际致力于消灭剥削，建立一个由劳动玩家当家作主的公社。我们以纯红旗帜为指引，用镐子与斧头开辟新天地。</p>
+            <p>这里没有地主，没有垄断资本。每一块泥土、每一根原木都属于全体人民。加入我们，成为伟大的方块社会主义建设者。</p>
+        </section>
+
+        <div class="banner-slogan">剥夺剥夺者，将生产资料收归全体玩家所有！</div>
+
+        <section id="about" class="section-box">
+            <div class="section-title"><span>国家概况与政治纲领</span></div>
+            <div class="info-grid">
+                <div class="info-block">
+                    <h3>国家基本情况</h3>
+                    <p><strong>国名：</strong>共产国际</p>
+                    <p><strong>国旗：</strong>纯红无图案旗帜（象征革命与鲜血）</p>
+                    <p><strong>政体：</strong>劳动玩家代表大会制</p>
+                    <p><strong>经济体制：</strong>公有制为主体的计划经济</p>
+                    <p><strong>所在服务器：</strong>Fishport</p>
+                </div>
+                <div class="info-block">
+                    <h3>核心施政纲领</h3>
+                    <ul>
+                        <li>坚决抵制服务器内的资本垄断与土地兼并。</li>
+                        <li>所有大型农场、自动刷铁机等基础设施归集体所有。</li>
+                        <li>实行按劳分配原则，多劳多得，不劳动者不得食。</li>
+                        <li>对内发展生产保障供给，对外武装保卫红色政权。</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="history" class="section-box">
+            <div class="section-title"><span>国家编年史与革命历程</span></div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-date">第一纪元 · 创建靖海</div>
+                    <div class="timeline-content">共产国际在海域边陲建立第一座城市——靖海。以"靖海"为名，寓意平定海疆、安定四方。在荒凉的海岸线上，第一面红旗升起，革命据点由此诞生。</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">第二纪元 · 建设青岛</div>
+                    <div class="timeline-content">随着人口增长与产业扩张，共产国际决议东进，于青翠海域之滨建设第二座城市——青岛。青岛拥有更广阔的腹地与天然良港，国家工业化建设从此全面铺开。</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">第三纪元 · 进驻利津</div>
+                    <div class="timeline-content">前期积累的雄厚实力为第三次战略扩张奠定了基础。共产国际选择利津作为国家核心城市，在此建设永久性行政中心。利津时期，国家体制趋于完善，红色政权根基稳固。</div>
+                </div>
+            </div>
+        </section>
+
+        <div class="banner-slogan">劳动最光荣，创造最崇高！为建设方块乌托邦而奋斗！</div>
+
+        <div class="grid-2">
+            <div>
+                <section id="gallery" class="section-box">
+                    <div class="section-title"><span>国家建设成就</span></div>
+                    <div class="gallery-grid">
+                        <div class="gallery-item">
+                            <img src="https://z-cdn-media.chatglm.cn/files/d7389abe-3677-46ed-ab3d-db64609f0520.png?auth_key=1885302919-39dd049a3b704e14b9a214ec6ed8bfd3-0-659ea0c3812f7833fedcf6c1962d6104" alt="主岛">
+                            <p>共产国际主岛全景：核心水域群岛，行政与居住中心。</p>
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://z-cdn-media.chatglm.cn/files/2cdc7599-347a-4031-8a0f-f11bacb4f13c.jpg?auth_key=1885304398-c0be50de938342eaa55a227e4b5ffe63-0-74606d9a19b601944611e9dcc93e30c7" alt="红砖纪念碑">
+                            <p>共产国际纪念碑：宏伟的红砖雕塑，象征工人阶级的坚不可摧。</p>
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://z-cdn-media.chatglm.cn/files/a44887c3-7f28-46f7-b502-1336f9b94c8d.png?auth_key=1885302919-cfe4e5faa2584457a582add4ecc2444b-0-55828833ffe1f7cfa7760e6595651125" alt="集会广场">
+                            <p>中央集会广场入口：召开群众集会与发布政令的核心区域。</p>
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://z-cdn-media.chatglm.cn/files/4bf87ca2-398d-460d-ab89-7c0ada98cf94.png?auth_key=1885302919-b717b4afd5d5499d90bf9cde831741f8-0-1639d04a84bd550f8ad62528da5ca8a5" alt="工人新村">
+                            <p>工人新村一期工程：依水而建的木结构住宅，已全部分配。</p>
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://z-cdn-media.chatglm.cn/files/c98cd804-37f6-4120-85da-2d9cf82d9c97.png?auth_key=1885302919-5cccfdb74d6042c6a3f7da43b85550c6-0-543ab41150dfe51ca270ebf5dd1f4098" alt="工业大楼">
+                            <p>联合轻工业大楼：多层玻璃与木质结构，内部部署红石生产线。</p>
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://z-cdn-media.chatglm.cn/files/70c50801-0a15-4b15-a34e-09accfdc1757.png?auth_key=1885302919-875949c16b374800a2b4d06e6c2cc577-0-8f9172aa9525a0c9a2c3d4fb6a8760df" alt="保护区">
+                            <p>历史文化保护区：保留Fishport早期原住民特色的古风建筑。</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="news" class="section-box">
+                    <div class="section-title"><span>国家新闻</span></div>
+                    <div id="newsStatus" class="news-status"></div>
+                    <div id="newsAdminBar" style="display:none; margin-bottom:15px;">
+                        <button class="news-btn news-btn-add" onclick="openAddModal()">+ 发布新闻</button>
+                    </div>
+                    <div id="newsList">
+                        <div class="news-loading">正在加载新闻<span class="news-loading-spinner"></span></div>
+                    </div>
+                </section>
+            </div>
+
+            <div>
+                <section id="join" class="recruit-card">
+                    <h3>加入共产国际</h3>
+                    <p>一切愿意为服务器建设贡献力量的劳动玩家，请加入我们的官方通讯频道。</p>
+                    <div class="qq-box" onclick="copyQQ()">
+                        <span>QQ群: 979265240</span>
+                    </div>
+                    <p class="qq-hint" id="copyHint">点击群号即可一键复制</p>
+                </section>
+
+                <div class="notice-board" style="margin-top: 30px;">
+                    <h3>最高通告</h3>
+                    <ul>
+                        <li>1. 严禁任何成员在境内进行商业投机倒把。</li>
+                        <li>2. 所有矿产资源的20%需上缴国家公共仓库。</li>
+                        <li>3. 境内建筑受国家保护，恶意破坏者将被驱逐。</li>
+                        <li>4. 遇到外敌入侵，全体成员有义务拿起武器保卫公社。</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 共产国际人民委员会 | Fishport 服务器分支</p>
+        <p>本网站由公有资产管理局统筹发布 | 坚决捍卫方块世界的红色阵地</p>
+    </footer>
+
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-box">
+            <h3>管理员登录</h3>
+            <label for="loginPwd">密码</label>
+            <input type="password" id="loginPwd" placeholder="请输入管理员密码">
+            <div class="modal-error" id="loginError">密码错误，请重试。</div>
+            <div class="modal-actions">
+                <button class="modal-cancel" onclick="closeModal('loginModal')">取消</button>
+                <button class="modal-confirm" onclick="doLogin()">登录</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="editModal">
+        <div class="modal-box">
+            <h3 id="editModalTitle">发布新闻</h3>
+            <label for="newsTitleInput">标题</label>
+            <input type="text" id="newsTitleInput" placeholder="新闻标题">
+            <label for="newsDateInput">日期</label>
+            <input type="text" id="newsDateInput" placeholder="例：2025年7月12日">
+            <label for="newsContentInput">内容</label>
+            <textarea id="newsContentInput" placeholder="新闻正文内容..."></textarea>
+            <div class="modal-actions">
+                <button class="modal-cancel" onclick="closeModal('editModal')">取消</button>
+                <button class="modal-confirm" id="editConfirmBtn" onclick="saveNews()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal-box">
+            <h3>确认删除</h3>
+            <p style="margin-bottom:20px; color:#555;">确定要删除这条新闻吗？此操作不可撤销。</p>
+            <div class="modal-actions">
+                <button class="modal-cancel" onclick="closeModal('deleteModal')">取消</button>
+                <button class="modal-confirm" id="deleteConfirmBtn" onclick="confirmDelete()" style="background:#c0392b;">删除</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ================================================================
+        //  Supabase 配置
+        // ================================================================
+        var SUPABASE_URL = 'https://tqtolwsdyqwwyvsnyzjo.supabase.co';
+        var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRxdG9sd3NkeXF3d3l2c255empvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2OTE0MDcsImV4cCI6MjA5NTI2NzQwN30.A0MqVaLwJ8-Yh-EYkCm3QAyV9W5zG19FlH-v8s8eJm8';
+
+        // ================================================================
+        //  全局变量
+        // ================================================================
+        var db = null;
+        var isAdmin = false;
+        var editingId = null;
+        var deletingId = null;
+        var useSupabase = false;
+
+        var _memStore = {};
+        function safeGet(key) { try { return localStorage.getItem(key); } catch(e) { return _memStore[key] || null; } }
+        function safeSet(key, val) { try { localStorage.setItem(key, val); } catch(e) { _memStore[key] = val; } }
+        function safeRemove(key) { try { localStorage.removeItem(key); } catch(e) { delete _memStore[key]; } }
+
+        // ================================================================
+        //  初始化 Supabase
+        // ================================================================
+        (function initSupabase() {
+            try {
+                if (SUPABASE_URL && SUPABASE_URL.indexOf('supabase.co') !== -1
+                    && SUPABASE_ANON_KEY && SUPABASE_ANON_KEY.indexOf('eyJ') === 0
+                    && typeof supabase !== 'undefined' && supabase.createClient) {
+                    db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                    useSupabase = true;
+                    console.log('Supabase 已连接');
+                } else {
+                    console.log('Supabase 未配置，使用本地存储');
+                }
+            } catch(e) {
+                console.warn('Supabase 初始化失败:', e);
+            }
+        })();
+
+        // ================================================================
+        //  新闻数据读写
+        // ================================================================
+        var defaultNews = [
+            { id: 1, title: '利津新都正式落成', date: '2025年7月', content: '经过全体劳动玩家的不懈努力，利津新都建设全面完成。人民委员会在此举行盛大典礼，宣布利津正式成为国家永久核心。红旗飘扬，礼炮齐鸣，新时代由此开启。' },
+            { id: 2, title: '青岛时期工业建设回顾', date: '2025年6月', content: '青岛时期是共产国际工业化进程的关键阶段。联合轻工业大楼投产、红石自动化生产线部署、工人新村竣工——青岛为利津的最终定鼎奠定了坚实的物质基础。' },
+            { id: 3, title: '靖海建城纪念', date: '2025年5月', content: '铭记靖海——一切伟大事业的起点。在荒凉的海岸线上，先驱者们用双手垒起第一堵墙，用镐子挖出第一方矿。靖海虽小，却是红色火种的诞生之地。' }
+        ];
+
+        async function loadNewsFromSupabase() {
+            var result = await db.from('news').select('*').order('id', { ascending: false });
+            if (result.error) throw result.error;
+            return result.data || [];
+        }
+
+        function loadNewsFromLocal() {
+            var stored = safeGet('jinghai_news');
+            if (stored) { try { return JSON.parse(stored); } catch(e) {} }
+            safeSet('jinghai_news', JSON.stringify(defaultNews));
+            return defaultNews;
+        }
+
+        function saveNewsToLocal(data) {
+            safeSet('jinghai_news', JSON.stringify(data));
+        }
+
+        async function loadNews() {
+            if (useSupabase) {
+                try { return await loadNewsFromSupabase(); }
+                catch(e) { console.warn('Supabase 读取失败，使用本地:', e); return loadNewsFromLocal(); }
+            }
+            return loadNewsFromLocal();
+        }
+
+        function escapeHtml(text) {
+            var div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function showStatus(msg, type) {
+            var el = document.getElementById('newsStatus');
+            el.textContent = msg;
+            el.className = 'news-status ' + type;
+            if (type !== 'saving') {
+                setTimeout(function() { el.className = 'news-status'; }, 3000);
+            }
+        }
+
+        // ================================================================
+        //  渲染新闻列表
+        // ================================================================
+        async function renderNews() {
+            var container = document.getElementById('newsList');
+            container.innerHTML = '<div class="news-loading">正在加载新闻<span class="news-loading-spinner"></span></div>';
+
+            var newsArr;
+            try { newsArr = await loadNews(); }
+            catch(e) { container.innerHTML = '<div class="news-empty">加载新闻失败，请刷新重试。</div>'; return; }
+
+            if (!newsArr || newsArr.length === 0) {
+                container.innerHTML = '<div class="news-empty">暂无新闻</div>';
+                return;
+            }
+
+            if (!useSupabase) {
+                newsArr = newsArr.slice().sort(function(a, b) { return b.id - a.id; });
+            }
+
+            var html = '';
+            for (var i = 0; i < newsArr.length; i++) {
+                var item = newsArr[i];
+                html += '<div class="news-item">'
+                    + '<h4>' + escapeHtml(item.title) + '</h4>'
+                    + '<div class="news-date">' + escapeHtml(item.date) + '</div>'
+                    + '<div class="news-content">' + escapeHtml(item.content) + '</div>'
+                    + '<div class="news-actions ' + (isAdmin ? 'visible' : '') + '">'
+                    + '<button class="news-btn news-btn-edit" onclick="openEditModal(' + item.id + ')">编辑</button>'
+                    + '<button class="news-btn news-btn-delete" onclick="openDeleteModal(' + item.id + ')">删除</button>'
+                    + '</div></div>';
+            }
+            container.innerHTML = html;
+        }
+
+        // ================================================================
+        //  管理员登录
+        // ================================================================
+        function handleAdminBtn() {
+            if (isAdmin) {
+                isAdmin = false;
+                safeRemove('jinghai_admin');
+                updateAdminUI();
+                renderNews();
+                return;
+            }
+            document.getElementById('loginPwd').value = '';
+            document.getElementById('loginError').style.display = 'none';
+            openModal('loginModal');
+            setTimeout(function() { document.getElementById('loginPwd').focus(); }, 100);
+        }
+
+        function doLogin() {
+            var pwd = document.getElementById('loginPwd').value;
+            if (pwd === '1111') {
+                isAdmin = true;
+                safeSet('jinghai_admin', '1');
+                closeModal('loginModal');
+                updateAdminUI();
+                renderNews();
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+            }
+        }
+
+        document.getElementById('loginPwd').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') doLogin();
+        });
+
+        function updateAdminUI() {
+            var btn = document.getElementById('adminBtn');
+            var bar = document.getElementById('newsAdminBar');
+            if (isAdmin) {
+                btn.textContent = '退出管理';
+                btn.classList.add('logged-in');
+                bar.style.display = 'block';
+            } else {
+                btn.textContent = '管理员登录';
+                btn.classList.remove('logged-in');
+                bar.style.display = 'none';
+            }
+        }
+
+        // ================================================================
+        //  添加新闻
+        // ================================================================
+        function openAddModal() {
+            editingId = null;
+            document.getElementById('editModalTitle').textContent = '发布新闻';
+            document.getElementById('newsTitleInput').value = '';
+            document.getElementById('newsDateInput').value = '';
+            document.getElementById('newsContentInput').value = '';
+            document.getElementById('editConfirmBtn').disabled = false;
+            document.getElementById('editConfirmBtn').textContent = '保存';
+            openModal('editModal');
+            setTimeout(function() { document.getElementById('newsTitleInput').focus(); }, 100);
+        }
+
+        // ================================================================
+        //  编辑新闻
+        // ================================================================
+        async function openEditModal(id) {
+            editingId = id;
+            document.getElementById('editModalTitle').textContent = '编辑新闻';
+            document.getElementById('editConfirmBtn').disabled = false;
+            document.getElementById('editConfirmBtn').textContent = '保存';
+
+            var newsArr = await loadNews();
+            var item = null;
+            for (var i = 0; i < newsArr.length; i++) {
+                if (newsArr[i].id === id) { item = newsArr[i]; break; }
+            }
+            if (!item) { alert('找不到该新闻'); return; }
+
+            document.getElementById('newsTitleInput').value = item.title;
+            document.getElementById('newsDateInput').value = item.date;
+            document.getElementById('newsContentInput').value = item.content;
+            openModal('editModal');
+        }
+
+        // ================================================================
+        //  保存新闻
+        // ================================================================
+        async function saveNews() {
+            var title = document.getElementById('newsTitleInput').value.trim();
+            var date = document.getElementById('newsDateInput').value.trim();
+            var content = document.getElementById('newsContentInput').value.trim();
+
+            if (!title || !date || !content) { alert('请填写完整的标题、日期和内容。'); return; }
+
+            var confirmBtn = document.getElementById('editConfirmBtn');
+            confirmBtn.disabled = true;
+            confirmBtn.textContent = '保存中...';
+
+            var success = false;
+
+            if (useSupabase) {
+                try {
+                    var res;
+                    if (editingId !== null) {
+                        res = await db.from('news').update({ title: title, date: date, content: content }).eq('id', editingId);
+                    } else {
+                        res = await db.from('news').insert([{ title: title, date: date, content: content }]);
+                    }
+                    if (res.error) throw res.error;
+                    success = true;
+                } catch(e) {
+                    console.warn('Supabase 写入失败:', e);
+                    success = false;
+                }
+            }
+
+            if (!useSupabase || !success) {
+                var localArr = loadNewsFromLocal();
+                if (editingId !== null) {
+                    for (var i = 0; i < localArr.length; i++) {
+                        if (localArr[i].id === editingId) {
+                            localArr[i].title = title;
+                            localArr[i].date = date;
+                            localArr[i].content = content;
+                            break;
+                        }
+                    }
+                } else {
+                    var maxId = 0;
+                    for (var j = 0; j < localArr.length; j++) { if (localArr[j].id > maxId) maxId = localArr[j].id; }
+                    localArr.push({ id: maxId + 1, title: title, date: date, content: content });
+                }
+                saveNewsToLocal(localArr);
+                success = true;
+            }
+
+            confirmBtn.disabled = false;
+            confirmBtn.textContent = '保存';
+            closeModal('editModal');
+
+            if (success) {
+                showStatus(editingId !== null ? '新闻已更新' : '新闻已发布', 'success');
+            } else {
+                showStatus('保存失败，请重试', 'error');
+            }
+            renderNews();
+        }
+
+        // ================================================================
+        //  删除新闻
+        // ================================================================
+        function openDeleteModal(id) {
+            deletingId = id;
+            document.getElementById('deleteConfirmBtn').disabled = false;
+            document.getElementById('deleteConfirmBtn').textContent = '删除';
+            openModal('deleteModal');
+        }
+
+        async function confirmDelete() {
+            if (deletingId === null) return;
+
+            var confirmBtn = document.getElementById('deleteConfirmBtn');
+            confirmBtn.disabled = true;
+            confirmBtn.textContent = '删除中...';
+
+            var success = false;
+
+            if (useSupabase) {
+                try {
+                    var res = await db.from('news').delete().eq('id', deletingId);
+                    if (res.error) throw res.error;
+                    success = true;
+                } catch(e) {
+                    console.warn('Supabase 删除失败:', e);
+                    success = false;
+                }
+            }
+
+            if (!useSupabase || !success) {
+                var localArr = loadNewsFromLocal();
+                var newArr = [];
+                for (var i = 0; i < localArr.length; i++) {
+                    if (localArr[i].id !== deletingId) newArr.push(localArr[i]);
+                }
+                saveNewsToLocal(newArr);
+                success = true;
+            }
+
+            confirmBtn.disabled = false;
+            confirmBtn.textContent = '删除';
+            deletingId = null;
+            closeModal('deleteModal');
+
+            if (success) { showStatus('新闻已删除', 'success'); }
+            else { showStatus('删除失败，请重试', 'error'); }
+            renderNews();
+        }
+
+        // ================================================================
+        //  模态框
+        // ================================================================
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        var overlays = document.querySelectorAll('.modal-overlay');
+        for (var i = 0; i < overlays.length; i++) {
+            (function(overlay) {
+                overlay.addEventListener('click', function(e) {
+                    if (e.target === overlay) {
+                        overlay.classList.remove('active');
+                        document.body.style.overflow = '';
+                    }
+                });
+            })(overlays[i]);
+        }
+
+        // ================================================================
+        //  初始化
+        // ================================================================
+        if (safeGet('jinghai_admin') === '1') { isAdmin = true; }
+        updateAdminUI();
+        renderNews();
+
+        function copyQQ() {
+            var qq = '979265240';
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(qq).then(function() { showCopySuccess(); }).catch(function() { fallbackCopy(qq); });
+            } else { fallbackCopy(qq); }
+        }
+        function fallbackCopy(text) {
+            var ta = document.createElement('textarea');
+            ta.value = text; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+            document.body.appendChild(ta); ta.select();
+            try { document.execCommand('copy'); showCopySuccess(); }
+            catch(e) { alert('复制失败，请手动复制群号：' + text); }
+            document.body.removeChild(ta);
+        }
+        function showCopySuccess() {
+            var hint = document.getElementById('copyHint');
+            hint.innerText = '复制成功！请打开QQ搜索群号加入。';
+            hint.style.color = '#FFD700';
+            setTimeout(function() { hint.innerText = '点击群号即可一键复制'; hint.style.color = '#aaa'; }, 3000);
+        }
+    </script>
+</body>
+</html>
