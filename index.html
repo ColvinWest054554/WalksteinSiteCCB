@@ -352,13 +352,6 @@
         function safeRemove(key) { try { localStorage.removeItem(key); } catch(e) { delete _memStore[key]; } }
         function sleep(ms) { return new Promise(function(resolve) { setTimeout(resolve, ms); }); }
 
-        // 获取UTC全局偏移
-        function getGlobalUTCOffset() {
-            var now = new Date();
-            var utcSeconds = Math.floor(now.getTime() / 1000);
-            return utcSeconds % globalCycleSeconds;
-        }
-
         // ===================== 字数计数器 =====================
         function updateCharCounter(inputId, counterId, maxLen) {
             var input = document.getElementById(inputId);
@@ -431,169 +424,64 @@
         // ===================== 电台全局核心变量 =====================
         let radioPlaying = false;
         let radioVolume = 0.7;
-        let voiceNovel = null;
-        let voiceNews = null;
         let countdownTimer = null;
-        let hourBroadcastLock = false;
-        let globalCycleSeconds = 14400;
-        const bgMusicList = [
-            new Audio("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"),
-            new Audio("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"),
-            new Audio("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3"),
-            new Audio("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3")
+
+        // 可播放的音频文件列表
+        const radioTrackList = [
+            '001.mp3',
+            '002.mp3'
         ];
-        let currentBgIndex = 0;
-        let currentBgAudio = bgMusicList[currentBgIndex];
-        currentBgAudio.loop = true;
-        const novelLibrary = [
-            {
-                title: "沃克斯坦先驱 · 第一章 荒原定居",
-                text: "许多年前，这片土地还只是一片无人踏足的荒原。远方的居民听闻布里吉斯中央政府规划新建自治区域，便收拾行囊，结伴向西迁徙。旅途漫长，道路泥泞，所有人都怀揣同一个愿望，建立一处秩序安稳、人人平等的新家园。抵达这片谷地时，天色已经昏暗，先驱者们点燃篝火，划定了最初的行政区边界。"
-            },
-            {
-                title: "沃克斯坦先驱 · 第二章 道路开垦",
-                text: "定居后的第一年，所有人合力开垦基础道路。没有大型机械，全靠人力挖掘、铺设碎石。白天劳作，夜晚围坐篝火商议社区规则。大家一致决定，优先规划居民区与公共用地，预留大片土地用于未来火车站建设，打通与全国路网的连接。"
-            },
-            {
-                title: "沃克斯坦先驱 · 第三章 市政落成",
-                text: "数年建设过后，市政大楼正式竣工。纯白墙体搭配深蓝色标识，成为整片区域的核心地标。自治委员会在此召开第一次全体会议，确立施政三大基石：秩序、建设、繁荣。从这天起，沃克斯坦正式拥有完整独立的地方行政管理体系。"
-            },
-            {
-                title: "沃克斯坦生活随笔 · 社区日常",
-                text: "如今走在沃克斯坦街道，随处可见平整道路与整洁民居。施工区域井然有序，居民自觉遵守公共规范。闲暇时人们会前往市政大厅咨询政策，或是散步观望正在施工的铁路站台。这座新城，正在一步一步兑现当年先驱者们的期许。"
-            }
-        ];
-        let currentNovelId = 0;
-        let novelSegmentOffset = 0;
 
-        // ===================== 初始化真人化人声 =====================
-        function initVoices() {
-            var voices = window.speechSynthesis.getVoices();
-            let softVoice = null;
-            let anchorVoice = null;
-            for (let v of voices) {
-                if (!v.lang.includes("zh-CN")) continue;
-                if (v.name.includes("晓晓") || v.name.includes("云汐") || v.name.includes("晓萱")) softVoice = v;
-                if (v.name.includes("云扬") || v.name.includes("沉稳") || v.name.includes("新闻播音")) anchorVoice = v;
-            }
-            if (!softVoice) softVoice = voices.find(function(v){ return v.lang.startsWith("zh"); }) || voices[0];
-            if (!anchorVoice) anchorVoice = softVoice;
-            voiceNovel = softVoice;
-            voiceNews = anchorVoice;
-        }
-        window.speechSynthesis.onvoiceschanged = initVoices;
+        // 当前正在播放的 Audio 对象
+        let currentAudio = null;
+        // 当前曲目在列表中的索引
+        let currentTrackIndex = -1;
 
-        function naturalTextProcess(rawText) {
-            let t = rawText;
-            t = t.replace(/，/g, "，  ");
-            t = t.replace(/。/g, "。    ");
-            t = t.replace(/；/g, "；  ");
-            t = t.replace(/：/g, "： ");
-            t = t.replace(/、/g, "、 ");
-            return t;
+        // ===================== 随机选曲（不连续重复） =====================
+        function pickRandomTrack() {
+            if (radioTrackList.length === 1) return 0;
+            var next;
+            do {
+                next = Math.floor(Math.random() * radioTrackList.length);
+            } while (next === currentTrackIndex);
+            return next;
         }
 
-        // ===================== 多背景音乐轮换切换 =====================
-        function switchBgMusicByGlobalOffset() {
-            var offset = getGlobalUTCOffset();
-            var singleMusicCycle = globalCycleSeconds / bgMusicList.length;
-            var newIdx = Math.floor(offset / singleMusicCycle) % bgMusicList.length;
-            if (newIdx !== currentBgIndex) {
-                currentBgAudio.pause();
-                currentBgIndex = newIdx;
-                currentBgAudio = bgMusicList[currentBgIndex];
-                currentBgAudio.volume = radioVolume * 0.32;
-                if (radioPlaying) currentBgAudio.play();
+        // ===================== 播放指定索引的曲目 =====================
+        function playTrack(index) {
+            // 停止并释放上一段音频
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.onended = null;
+                currentAudio = null;
             }
-        }
 
-        // ===================== 同步小说朗读逻辑 =====================
-        async function syncPlayNovel() {
-            if (!radioPlaying) return;
-            window.speechSynthesis.cancel();
-            switchBgMusicByGlobalOffset();
-            var offset = getGlobalUTCOffset();
-            var singleNovelTime = globalCycleSeconds / novelLibrary.length;
-            currentNovelId = Math.floor(offset / singleNovelTime) % novelLibrary.length;
-            var novel = novelLibrary[currentNovelId];
-            document.getElementById("radioNowTitle").innerText = "正在朗读：" + novel.title;
-            var utter = new SpeechSynthesisUtterance(naturalTextProcess(novel.text));
-            utter.voice = voiceNovel;
-            utter.rate = 0.88;
-            utter.pitch = 1.03;
-            utter.volume = radioVolume;
-            utter.onend = async function() {
-                await sleep(4500);
-                syncPlayNovel();
+            currentTrackIndex = index;
+            var src = radioTrackList[index];
+            currentAudio = new Audio(src);
+            currentAudio.volume = radioVolume;
+            currentAudio.preload = 'auto';
+
+            // 曲目播完 → 随机下一首 → 循环
+            currentAudio.onended = function() {
+                if (!radioPlaying) return;
+                var nextIdx = pickRandomTrack();
+                playTrack(nextIdx);
             };
-            window.speechSynthesis.speak(utter);
+
+            currentAudio.play().catch(function(err) {
+                console.warn('音频播放失败:', src, err);
+            });
         }
 
-        // ===================== 整点新闻播报 =====================
-        async function hourNewsBroadcast() {
-            if (!radioPlaying || hourBroadcastLock) return;
-            hourBroadcastLock = true;
-            window.speechSynthesis.cancel();
-            currentBgAudio.volume = radioVolume * 0.12;
-            var alertBox = document.getElementById("radioAlertBox");
-            alertBox.style.display = "block";
-            var openUtter = new SpeechSynthesisUtterance("各位听众，现在进入沃克斯坦生活电台整点新闻快报时段，为您播报自治区最新官方资讯。");
-            openUtter.voice = voiceNews;
-            openUtter.rate = 0.93;
-            openUtter.pitch = 0.97;
-            openUtter.volume = radioVolume;
-            window.speechSynthesis.speak(openUtter);
-            await sleep(3000);
-            var newsArr = await loadNews();
-            if (newsArr.length === 0) {
-                var emptyUtter = new SpeechSynthesisUtterance("当前暂无更新的官方新闻，本次整点资讯播报内容为空。");
-                emptyUtter.voice = voiceNews;
-                window.speechSynthesis.speak(emptyUtter);
-                await sleep(3000);
-            } else {
-                for (let i = 0; i < newsArr.length; i++) {
-                    var n = newsArr[i];
-                    var titleStr = "第" + (i+1) + "条新闻，标题：" + n.title + "，发布日期：" + n.date;
-                    var contentStr = "新闻详情：" + n.content;
-                    var tUtter = new SpeechSynthesisUtterance(naturalTextProcess(titleStr));
-                    tUtter.voice = voiceNews;
-                    tUtter.rate = 0.93;
-                    window.speechSynthesis.speak(tUtter);
-                    await sleep(titleStr.length * 180);
-                    var cUtter = new SpeechSynthesisUtterance(naturalTextProcess(contentStr));
-                    cUtter.voice = voiceNews;
-                    cUtter.rate = 0.91;
-                    window.speechSynthesis.speak(cUtter);
-                    await sleep(contentStr.length * 160);
-                    await sleep(1500);
-                }
+        // ===================== 停止当前播放 =====================
+        function stopRadio() {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.onended = null;
+                currentAudio = null;
             }
-            var closeUtter = new SpeechSynthesisUtterance("本次整点新闻播报全部结束，接下来回到长篇小说与轻音乐节目。");
-            closeUtter.voice = voiceNews;
-            window.speechSynthesis.speak(closeUtter);
-            await sleep(2800);
-            currentBgAudio.volume = radioVolume * 0.32;
-            alertBox.style.display = "none";
-            hourBroadcastLock = false;
-            syncPlayNovel();
-        }
-
-        // ===================== 全局倒计时+整点检测 =====================
-        function startGlobalCountdown() {
-            clearInterval(countdownTimer);
-            countdownTimer = setInterval(function(){
-                var now = new Date();
-                var min = now.getMinutes();
-                var sec = now.getSeconds();
-                var remMin = 59 - min;
-                var remSec = 60 - sec;
-                document.getElementById("radioCountdown").innerText = "距离整点新闻播报：" + remMin + "分" + remSec + "秒";
-                if (min === 0 && sec <= 3 && !hourBroadcastLock) {
-                    hourNewsBroadcast();
-                }
-                if (min > 1) hourBroadcastLock = false;
-                switchBgMusicByGlobalOffset();
-            }, 1000);
+            currentTrackIndex = -1;
         }
 
         // ===================== 播放/暂停总开关 =====================
@@ -602,24 +490,19 @@
             var btn = document.getElementById("radioPlayBtn");
             if (radioPlaying) {
                 btn.innerText = "⏸";
-                currentBgAudio.volume = radioVolume * 0.32;
-                currentBgAudio.play();
-                startGlobalCountdown();
-                syncPlayNovel();
+                // 随机选一首开始播放
+                var startIdx = pickRandomTrack();
+                playTrack(startIdx);
             } else {
                 btn.innerText = "▶";
-                currentBgAudio.pause();
-                window.speechSynthesis.cancel();
-                clearInterval(countdownTimer);
+                stopRadio();
             }
         }
 
         function setRadioVolume(val) {
             radioVolume = val / 100;
-            if (hourBroadcastLock) {
-                currentBgAudio.volume = radioVolume * 0.12;
-            } else {
-                currentBgAudio.volume = radioVolume * 0.32;
+            if (currentAudio) {
+                currentAudio.volume = radioVolume;
             }
         }
 
@@ -733,7 +616,7 @@
             // 1111 的 SHA-256: 0ffe1abd1a08215353c233d6e009613e95eec4253832a761af28ff37ac5a150c
             var WEAK_HASH_1111 = '0ffe1abd1a08215353c233d6e009613e95eec4253832a761af28ff37ac5a150c';
             if (inputHash === WEAK_HASH_1111) {
-                errorEl.textContent = '不准这样玩😡';
+                errorEl.textContent = '密码 "1111" 被沃克斯坦安全系统判定为弱密码，拒绝登录。';
                 errorEl.style.display = 'block';
                 imageEl.src = WEAK_PASSWORD_IMAGE;
                 imageBox.style.display = 'block';
@@ -1034,10 +917,6 @@
             if (safeGet('walkstein_admin') === '1') isAdmin = true;
             updateAdminUI();
             renderNews();
-            initVoices();
-            setTimeout(function(){
-                toggleRadioPlay();
-            }, 1000);
         })();
     </script>
 </body>
