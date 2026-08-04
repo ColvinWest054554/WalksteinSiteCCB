@@ -1,7 +1,11 @@
 # WalksteinSiteCCB（沃克斯坦自治区网站备份版）
+<h2>福宝（Fubao）</h2><p>为FishPort服务器新玩家。进服不久加入共产国际，随后在共产国际内乱中离开（在共产国际期间发表了一些不当智人言论后导致老资历集火），建立沃克斯坦自治区<br/>
 
 <h2>沃克斯坦自治区</h2><p>为FishPort服务器由"福宝（fubao）"建立的城镇，归属于布里吉斯。<br/>
-此城镇于2026年8月1日建立，8月3日被BVVD欺骗/t delete为取消圈地指令并执行，随后解散，成为FishPort大陆经典笑话</p>
+此城镇于2026年8月1日建立，8月3日被BVVD欺骗/t delete为取消圈地指令并执行，随后解散</p>
+
+<h2>沃克斯坦共和国</h2><p>为FishPort服务器由"福宝（fubao）"建立的国家，首都江北市<br/>
+此城镇于2026年8月4日建立，同日<a href="hhttps://jiangbei.pages.dev/">其网站</a>被ZBook使用anon读写漏洞往新闻栏输入大量<a href="https://cn.bing.com/search?q=%E5%85%B3%E6%B3%A8%E5%A1%94%E8%8F%B2%E5%96%B5">垃圾信息</a>导致瘫痪</p>
 
 <img width="1244" height="333" alt="智人tv" src="https://github.com/user-attachments/assets/a680bfe1-2489-4b1d-a4aa-80dfe83bcf17" /><br/>
 <img width="720" height="341" alt="经典语录永流传" src="https://github.com/user-attachments/assets/4a584f60-2a06-402f-9247-835728bb84c1" />
