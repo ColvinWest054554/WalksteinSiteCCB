@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>江北市</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=Oswald:wght@400;700&display=swap" rel="stylesheet">
+    <!-- 已移除 Supabase CDN -->
+    <style>
+        :root{--bg:#f7f5f0;--fg:#1c1c1c;--nav:#162a3a;--nav2:#0d1f2d;--gold:#c8a415;--teal:#2a6f7f;--card:#fff;--line:#d5d0c8;--muted:#7a7a7a;--red:#c0392b}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Noto Serif SC',serif;background:var(--bg);color:var(--fg);line-height:1.7;padding-bottom:70px}
+        a{color:inherit;text-decoration:none}
+        .topstrip{background:var(--nav2);color:rgba(255,255,255,.6);font-family:'Oswald',sans-serif;font-size:.75rem;padding:5px 32px;display:flex;justify-content:space-between;letter-spacing:.5px}
+        .head{background:var(--nav);padding:14px 32px;display:flex;align-items:center;gap:18px;position:sticky;top:0;z-index:90;border-bottom:3px solid var(--gold)}
+        .logo{width:50px;height:50px;border:2px solid var(--gold);display:grid;place-items:center;font-size:1.4rem;font-weight:900;color:var(--gold);background:var(--nav2)}
+        .htext h1{color:#fff;font-size:1.7rem;letter-spacing:4px;font-weight:900}
+        .htext span{color:rgba(255,255,255,.5);font-family:'Oswald',sans-serif;font-size:.72rem;letter-spacing:1px}
+        .links{margin-left:auto;display:flex;gap:22px}
+        .links a{color:rgba(255,255,255,.85);font-weight:700;font-size:.9rem;transition:color .2s}
+        .links a:hover{color:var(--gold)}
+        .wrap{max-width:1000px;margin:0 auto;padding:32px 16px}
+        .hero{margin-bottom:32px}
+        .hero h2{font-size:2.4rem;color:var(--nav);margin-bottom:10px;font-weight:900}
+        .hero p{font-size:1rem;color:#444;margin-bottom:8px;max-width:680px}
+        .band{background:var(--nav);color:#fff;text-align:center;padding:16px;font-size:1.2rem;font-weight:700;letter-spacing:3px;border-top:2px solid var(--gold);border-bottom:2px solid var(--gold);margin:32px 0}
+        .section{margin-bottom:32px}
+        .stitle{font-size:1.3rem;font-weight:900;color:var(--nav);border-left:5px solid var(--gold);padding-left:12px;margin-bottom:18px}
+        .cols{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+        .cols h3{font-size:1.05rem;color:var(--nav2);border-bottom:1px solid var(--line);padding-bottom:5px;margin-bottom:10px}
+        .cols p,.cols li{font-size:.9rem;color:#444;margin-bottom:6px}
+        .cols ul{padding-left:18px}
+        .tl{position:relative;padding-left:26px;border-left:3px solid var(--nav2);margin-left:6px}
+        .tl>div{margin-bottom:18px;position:relative}
+        .tl>div::before{content:'';position:absolute;left:-33px;top:5px;width:12px;height:12px;background:var(--gold);border:2px solid var(--nav2);border-radius:50%}
+        .tl .yr{font-family:'Oswald',sans-serif;font-weight:700;color:var(--nav2);font-size:1rem}
+        .tl .desc{font-size:.9rem;color:#444}
+        .nws{background:var(--card);border:1px solid var(--line);padding:18px;margin-bottom:28px;min-height:60px}
+        .nws-item{padding:12px 0;border-bottom:1px solid var(--line)}
+        .nws-item:last-child{border-bottom:none}
+        .nws-item h4{color:var(--nav2);font-size:1.05rem;margin-bottom:3px}
+        .nws-item .dt{font-family:'Oswald',sans-serif;font-size:.75rem;color:var(--muted);margin-bottom:6px}
+        .nws-item .ct{font-size:.9rem;color:#444;white-space:pre-wrap}
+        .nws-empty{text-align:center;color:var(--muted);padding:20px;font-size:.9rem}
+        .notice{background:var(--nav2);color:#fff;padding:18px;margin-top:28px}
+        .notice h3{color:var(--gold);font-size:1.05rem;margin-bottom:8px}
+        .notice ul{list-style:none;padding-left:8px}
+        .notice li{font-size:.85rem;margin-bottom:5px;opacity:.9}
+        .rp{position:fixed;bottom:0;left:0;right:0;height:58px;background:var(--nav2);color:#fff;display:flex;align-items:center;padding:0 14px;gap:10px;z-index:200;border-top:3px solid var(--gold);box-shadow:0 -2px 12px rgba(0,0,0,.25)}
+        .rp-tag{font-family:'Oswald',sans-serif;font-size:.78rem;font-weight:700;padding:2px 8px;border-radius:2px;white-space:nowrap;background:var(--gold);color:var(--fg)}
+        .rp-tag.alert{background:var(--red);color:#fff;animation:blink 1s infinite}
+        @keyframes blink{0%,100%{opacity:1}50%{opacity:.6}}
+        .rp-info{font-size:.78rem;color:rgba(255,255,255,.7);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px}
+        .rp-mid{flex:1;display:flex;align-items:center;justify-content:center;gap:8px}
+        .rp-play{width:32px;height:32px;border-radius:50%;border:2px solid var(--gold);background:none;color:var(--gold);font-size:.95rem;cursor:pointer;display:grid;place-items:center;transition:all .2s}
+        .rp-play:hover{background:var(--gold);color:var(--fg)}
+        .rp-bar{flex:1;max-width:240px;height:3px;background:rgba(255,255,255,.15);border-radius:2px;cursor:pointer}
+        .rp-fill{height:100%;background:var(--gold);border-radius:2px;width:0%;pointer-events:none}
+        .rp-tm{font-family:'Oswald',sans-serif;font-size:.72rem;color:rgba(255,255,255,.5);min-width:70px;text-align:center}
+        .rp-vol{display:flex;align-items:center;gap:4px}
+        .rp-vol svg{width:14px;height:14px;fill:rgba(255,255,255,.5)}
+        .rp-range{width:60px;height:3px;-webkit-appearance:none;appearance:none;background:rgba(255,255,255,.15);border-radius:2px;outline:none;cursor:pointer}
+        .rp-range::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:50%;background:var(--gold);cursor:pointer}
+        .bul-toast{position:fixed;top:14px;left:50%;transform:translateX(-50%);background:var(--red);color:#fff;padding:10px 22px;border-radius:4px;font-weight:700;font-size:.95rem;z-index:300;display:none;box-shadow:0 4px 16px rgba(192,57,43,.4)}
+        .bul-toast.on{display:block;animation:slideD .3s ease}
+        @keyframes slideD{from{opacity:0;transform:translateX(-50%) translateY(-12px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+        footer{background:var(--fg);color:rgba(255,255,255,.4);text-align:center;padding:24px;font-size:.82rem;margin-top:36px;border-top:3px solid var(--gold)}
+        @media(max-width:768px){.cols{grid-template-columns:1fr}.head{flex-direction:column;padding:12px 16px}.links{margin:8px 0 0 0;flex-wrap:wrap;justify-content:center}.topstrip{padding:4px 12px;font-size:.68rem}.band{font-size:1rem;letter-spacing:1px}.rp-info{max-width:100px;font-size:.7rem}.rp-bar{max-width:80px}.rp-range{width:36px}}
+    </style>
+</head>
+<body>
+<div class="bul-toast" id="bulToast">📻 整点快报 — 江北生活电台</div>
+<div class="topstrip"><span>江北市人民政府</span><span>系统在线 · 行政运转正常</span></div>
+<div class="head">
+    <div class="logo">江</div>
+    <div class="htext"><h1>江北市</h1><span>JIANGBEI MUNICIPALITY</span></div>
+    <div class="links">
+        <a href="#home">首页</a>
+        <a href="#about">概况</a>
+        <a href="#timeline">历程</a>
+        <a href="#radio">电台</a>
+        <a href="#news">新闻</a>
+    </div>
+</div>
+<div class="wrap">
+    <section id="home" class="hero">
+        <h2>江北市，秩序与繁荣之城</h2>
+        <p>坐落于广袤平原腹地，以务实与秩序为立城之本。从铁路枢纽到市政大厅，从居民区到商业街，江北市正以坚实步伐迈向未来。</p>
+        <p>每一位市民都是建设者，每一座建筑都是共同见证。</p>
+    </section>
+    <div class="band">秩序 · 建设 · 繁荣</div>
+    <section id="about" class="section">
+        <div class="stitle">市情概况</div>
+        <div class="cols">
+            <div>
+                <h3>基本情况</h3>
+                <p><strong>名称：</strong>江北市</p>
+                <p><strong>行政地位：</strong>市</p>
+                <p><strong>管理体制：</strong>市政府</p>
+                <p><strong>发展方向：</strong>交通枢纽与行政中心</p>
+                <p><strong>特色：</strong>江北生活电台</p>
+            </div>
+            <div>
+                <h3>核心施政方针</h3>
+                <ul>
+                    <li>优先发展交通基础设施，打造区域性铁路枢纽</li>
+                    <li>完善行政管理体系，保障公共服务高效运转</li>
+                    <li>建设江北生活电台，丰富市民精神文化生活</li>
+                    <li>鼓励市民参与建设，营造有序社区环境</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    <section id="timeline" class="section">
+        <div class="stitle">发展历程</div>
+        <div class="tl">
+            <div><span class="yr">第一阶段 · 建城</span><p class="desc">江北市在平原腹地正式建立。先驱者划定城市边界，建立最初据点与临时行政机构。</p></div>
+            <div><span class="yr">第二阶段 · 基础建设</span><p class="desc">道路网络初步铺设，居民区开始规划，基本生活保障设施逐步到位。人口稳步增长。</p></div>
+            <div><span class="yr">第三阶段 · 行政完善</span><p class="desc">市政府大楼竣工投入使用，行政管理体系正式运转。江北生活电台开播，每整点播报新闻。</p></div>
+        </div>
+    </section>
+    <div class="band">建设江北市，共创美好明天</div>
+    <section id="radio" class="section">
+        <div class="stitle">江北生活电台</div>
+        <div class="cols">
+            <div>
+                <h3>电台简介</h3>
+                <p>江北生活电台是江北市官方广播媒体，全天候音频服务。</p>
+                <p><strong>整点快报：</strong>每逢整点自动播报新闻录音。</p>
+                <p><strong>日常节目：</strong>非整点时段播放精选音乐。</p>
+            </div>
+            <div>
+                <h3>收听方式</h3>
+                <p>页面底部播放器即为在线收听入口。</p>
+                <p>点击播放即可收听，整点快报自动插播。</p>
+                <p style="color:var(--teal);font-weight:700;margin-top:8px">📻 每整点准时播报！</p>
+            </div>
+        </div>
+    </section>
+    <section id="news" class="section">
+        <div class="stitle">江市新闻</div>
+        <div class="nws" id="newsBox">
+            <!-- 静态新闻示例（已移除Supabase动态加载） -->
+            <div class="nws-item">
+                <h4>江北市备份网站搭建完毕</h4>
+                <div class="dt">2026年8月4日</div>
+                <div class="ct">备份网站搭建完毕，删去了所有Supbase组件，欢迎前来仓库浏览！</div>
+            </div>
+        </div>
+    </section>
+    <div class="notice">
+        <h3>市政通告</h3>
+        <ul>
+            <li>1. 火车站正在建设中，请注意施工区域安全</li>
+            <li>2. 市政府已正式办公，行政事务请前往市政大厅办理</li>
+            <li>3. 境内建筑受市政府保护，未经许可不得擅自拆除改建</li>
+            <li>4. 江北生活电台已开播，欢迎收听整点快报</li>
+        </ul>
+    </div>
+</div>
+<footer>© 江北市政府 · 江北生活电台 · 维护秩序，建设未来</footer>
+<div class="rp">
+    <div class="rp-tag" id="rTag">📻 电台</div>
+    <div class="rp-info" id="rInfo">点击播放收听</div>
+    <div class="rp-mid">
+        <button class="rp-play" id="rBtn" onclick="rToggle()">▶</button>
+        <div class="rp-bar" id="rBar" onclick="rSeek(event)"><div class="rp-fill" id="rFill"></div></div>
+        <span class="rp-tm" id="rTm">00:00 / 00:00</span>
+    </div>
+    <div class="rp-vol">
+        <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+        <input type="range" class="rp-range" min="0" max="100" value="80" oninput="rVol(this.value)">
+    </div>
+</div>
+<script>
+    // 已移除所有 Supabase 相关代码
+    // 电台功能保留（与之前完全相同）
+    var tracks=[
+        {name:'雨爱',url:encodeURI('./audio/雨爱-杨丞琳.mp3')},
+        {name:'海屿你',url:encodeURI('./audio/海屿你-三七.mp3')},
+        {name:'稻香',url:encodeURI('./audio/稻香-周杰伦.mp3')}
+    ];
+    var bulletinUrl=encodeURI('./audio/整点快报.mp3');
+
+    var mA=new Audio();mA.volume=.8;
+    var bA=new Audio();bA.volume=.8;bA.src=bulletinUrl;
+    var st='idle',ci=0,lbh=-1,wasP=false;
+
+    function sI(t){document.getElementById('rInfo').textContent=t}
+    function sT(t,c){var e=document.getElementById('rTag');e.textContent=t;e.className='rp-tag'+(c?' '+c:'')}
+
+    function rToggle(){
+        if(st==='idle'||st==='paused'){
+            if(!tracks.length){sI('暂无音乐');return}
+            if(ci>=tracks.length)ci=0;
+            mA.src=tracks[ci].url;
+            mA.play().then(function(){st='music';uUI()}).catch(function(e){console.error('播放失败:',e);st='idle';sI('播放失败，请检查audio文件夹');document.getElementById('rBtn').textContent='▶'})
+        }else if(st==='music'){mA.pause();st='paused';uUI()}
+    }
+
+    mA.addEventListener('ended',function(){ci++;if(ci>=tracks.length)ci=0;mA.src=tracks[ci].url;mA.play().catch(function(){});uUI()});
+
+    function bulPlay(){
+        wasP=!mA.paused;mA.pause();
+        bA.currentTime=0;
+        bA.play().catch(function(e){console.warn(e);if(wasP){mA.play();st='music';uUI()}});
+        st='bulletin';uUI();
+        document.getElementById('bulToast').classList.add('on');
+    }
+    bA.addEventListener('ended',function(){
+        document.getElementById('bulToast').classList.remove('on');
+        if(wasP){mA.play();st='music'}else{st='paused'}
+        uUI()
+    });
+
+    var wCode='var lh=-1;setInterval(function(){var d=new Date();if(d.getMinutes()===0&&d.getSeconds()===0&&lh!==d.getHours()){lh=d.getHours();postMessage("bul");}},800);';
+    var w=new Worker(URL.createObjectURL(new Blob([wCode],{type:'application/javascript'})));
+    w.onmessage=function(e){if(e.data==='bul'){var h=new Date().getHours();if(lbh!==h){lbh=h;bulPlay();}}};
+
+    setInterval(function(){
+        var el=st==='bulletin'?bA:mA,c=el.currentTime||0,d=el.duration||0;
+        document.getElementById('rFill').style.width=(d>0?c/d*100:0)+'%';
+        document.getElementById('rTm').textContent=ft(c)+' / '+ft(d)
+    },500);
+    function ft(s){if(isNaN(s)||!isFinite(s))return'00:00';var m=Math.floor(s/60),sc=Math.floor(s%60);return(m<10?'0':'')+m+':'+(sc<10?'0':'')+sc}
+    function rSeek(e){var b=document.getElementById('rBar'),r=b.getBoundingClientRect(),p=(e.clientX-r.left)/r.width,el=st==='bulletin'?bA:mA;if(el.duration&&isFinite(el.duration))el.currentTime=p*el.duration}
+    function rVol(v){var x=v/100;mA.volume=x;bA.volume=x}
+
+    function uUI(){
+        var b=document.getElementById('rBtn');
+        if(st==='idle'){b.textContent='▶';sT('📻 电台');sI('点击播放收听')}
+        else if(st==='music'){b.textContent='⏸';sT('📻 电台');sI(tracks[ci]?tracks[ci].name:'播放中')}
+        else if(st==='bulletin'){b.textContent='⏸';sT('📢 快报','alert');sI('整点快报播报中')}
+        else if(st==='paused'){b.textContent='▶';sT('📻 电台');sI('已暂停')}
+    }
+</script>
+</body>
+</html>
