@@ -33,6 +33,10 @@
 <img width="215" height="261" alt="试图甩锅" src="https://github.com/user-attachments/assets/c1c3b7c4-2a53-4575-8bd4-8f781a917f37" />
 <img width="254" height="453" alt="甩锅中" src="https://github.com/user-attachments/assets/44120ad1-aa9b-4706-8ea2-8b63ada935b6" />
 <img width="273" height="54" alt="开始将自己带入陈睿中" src="https://github.com/user-attachments/assets/c18babef-141e-46c9-9913-efddc185a346" />
+<img width="1068" height="432" alt="无力吐槽" src="https://github.com/user-attachments/assets/299293b0-e169-4632-8497-76549181f942" />
+<img width="2160" height="1620" alt="福宝大帝的证据" src="https://github.com/user-attachments/assets/05055170-8b89-4c7e-b0c8-7da5e9303e42" />
+
+
 
 
 
