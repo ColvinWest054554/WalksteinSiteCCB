@@ -29,7 +29,7 @@
 <img width="720" height="341" alt="经典语录永流传" src="https://github.com/user-attachments/assets/4a584f60-2a06-402f-9247-835728bb84c1" />
 <img width="345" height="21" alt="6" src="https://github.com/user-attachments/assets/1b1041a2-e624-46c8-accb-e100e7c5ff1e" />
 <img width="1074" height="42" alt="7" src="https://github.com/user-attachments/assets/4d8c3988-a407-4301-b7c5-40cb2b3220cc" />
-<img width="311" height="22" alt="8" src="https://github.com/user-attachments/assets/dca7395c-19b6-4b50-bfac-65fc32308cc7" />
+<img width="311" height="22" alt="8" src="https://github.com/user-attachments/assets/dca7395c-19b6-4b50-bfac-65fc32308cc7" /><br/>
 <img width="215" height="261" alt="试图甩锅" src="https://github.com/user-attachments/assets/c1c3b7c4-2a53-4575-8bd4-8f781a917f37" />
 <img width="254" height="453" alt="甩锅中" src="https://github.com/user-attachments/assets/44120ad1-aa9b-4706-8ea2-8b63ada935b6" />
 <img width="273" height="54" alt="开始将自己带入陈睿中" src="https://github.com/user-attachments/assets/c18babef-141e-46c9-9913-efddc185a346" />
