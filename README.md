@@ -10,7 +10,11 @@
 <h2>FishPort-沃克斯坦共和国</h2><p>为FishPort服务器由"福宝"建立的国家，首都江北市<br/>
 此城镇于2026年8月4日建立，同日<a href="hhttps://jiangbei.pages.dev/">其网站</a>被ZBook使用anon读写漏洞往新闻栏输入大量<a href="https://cn.bing.com/search?q=%E5%85%B3%E6%B3%A8%E5%A1%94%E8%8F%B2%E5%96%B5">垃圾信息</a>导致瘫痪，同时网站源码因卡顿无法复制如仓库，遂丢失</p>
 <h2>FishPort-福宝"FishPort论坛"</h2><p>2026年8月4日由福宝私人搭建搭建，福宝私自冠以FishPort名号的私人论坛，因缺乏审核与管控导致有人发表不当反动言论，对FishPort服务器产生负面舆论，后试图逃避责任。现已停站</p>
-<img width="228" height="55" alt="服主Ballking的声明" src="https://github.com/user-attachments/assets/306cdc39-fe0d-44b3-8dd4-f5e564e08b7c" />
+<figure>
+  <img width="228" height="55" alt="服主Ballking的声明" src="https://github.com/user-attachments/assets/306cdc39-fe0d-44b3-8dd4-f5e564e08b7c" />
+  <figcaption>FishPort管理员Ballking的声明</figcaption>
+</figure>
+
 <h1>关于此仓库：</h1>
 <p>此仓库由ZBook建立，复制了除论坛外福宝AI网站中的源码，同时删去了福宝自己的Supbase组件，加入了密码SHA256密文保护，新闻字数限制等功能，用于FishPort的各位了解这位"福宝大帝"的创业史，吸取教训</p>
 
