@@ -31,7 +31,7 @@
 
 
 <h1>关于此仓库：</h1>
-<p>此仓库由ZBook建立，复制了除论坛外福宝AI网站中的源码，同时删去了福宝自己的Supbase组件，加入了密码SHA256密文保护，新闻字数限制等功能，用于FishPort的各位了解这位"福宝大帝"的创业史，吸取教训</p>
+<p>此仓库由ZBook建立，复制了除论坛外福宝AI网站中的源码，用于FishPort的各位了解这位"福宝大帝"的创业史，吸取教训</p>
 
 
 <h1>附录：福宝传世经典</h1>
@@ -51,9 +51,9 @@
 <img width="273" height="54" alt="福宝在FishPort论坛事件中在Q群论述自己无责任，将自己的论坛类比为'BiliBili'，将自己类比为'BlilBlil的公司'并认为'B站很黑暗'但不能去怪B站公司来逃避责任" src="https://github.com/user-attachments/assets/c18babef-141e-46c9-9913-efddc185a346" />
 <img width="1068" height="432" alt="福宝在论坛事件过后为逃避责任找出在Q群中大伙为用福宝取乐而反串出的一堆'准了'来减少自己的责任" src="https://github.com/user-attachments/assets/299293b0-e169-4632-8497-76549181f942" />
 <img width="2160" height="1620" alt="福宝在论坛事件过后为逃避责任找出在Q群中大伙为用福宝取乐而反串出的一堆'准了'截图" src="https://github.com/user-attachments/assets/05055170-8b89-4c7e-b0c8-7da5e9303e42" />
-<img width="649" height="113" alt="etn在815事件时在服内指责福宝将公有铁路接入自己家截图" src="https://github.com/user-attachments/assets/ce859e52-75f0-4693-8d15-23e6a8e7dc94" />
-<img width="280" height="35" alt="福宝在815事件后在服内解散江北市截图" src="https://github.com/user-attachments/assets/3c2405bb-2a89-4831-9949-a4672da7f5b6" />
-<img width="388" height="41" alt="福宝在815事件解散江北市后在服内辱骂服务器截图" src="https://github.com/user-attachments/assets/b2336cf1-655a-4517-9f86-d201dede4eb7" />
+<img width="649" height="113" alt="etn在85事件时在服内指责福宝将公有铁路接入自己家截图" src="https://github.com/user-attachments/assets/ce859e52-75f0-4693-8d15-23e6a8e7dc94" />
+<img width="280" height="35" alt="福宝在85事件后在服内解散江北市截图" src="https://github.com/user-attachments/assets/3c2405bb-2a89-4831-9949-a4672da7f5b6" />
+<img width="388" height="41" alt="福宝在85事件解散江北市后在服内辱骂服务器截图" src="https://github.com/user-attachments/assets/b2336cf1-655a-4517-9f86-d201dede4eb7" />
 <img width="1080" height="2403" alt="福宝在服内etn国家'芝康武装'外插满一圈'服务器大傻逼'告示牌截图" src="https://github.com/user-attachments/assets/f7022cc5-c569-4d3f-94b1-dfdee2476029" />
 
 
