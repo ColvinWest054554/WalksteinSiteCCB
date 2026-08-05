@@ -56,6 +56,8 @@
 <img width="388" height="41" alt="福宝在85事件解散江北市后在服内辱骂服务器截图" src="https://github.com/user-attachments/assets/b2336cf1-655a-4517-9f86-d201dede4eb7" />
 <img width="1080" height="2403" alt="福宝在服内etn国家'芝康武装'外插满一圈'服务器大傻逼'告示牌截图" src="https://github.com/user-attachments/assets/f7022cc5-c569-4d3f-94b1-dfdee2476029" />
 
+<h2>FP服务器里对福宝的评价</h2>
+<img width="564" height="213" alt="image" src="https://docs.qq.com/aio/DQ0NiT1p5TEdyWVFh" />
 
 
 
