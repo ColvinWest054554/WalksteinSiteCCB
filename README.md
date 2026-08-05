@@ -54,7 +54,8 @@
 <img width="649" height="113" alt="etn在85事件时在服内指责福宝将公有铁路接入自己家截图" src="https://github.com/user-attachments/assets/ce859e52-75f0-4693-8d15-23e6a8e7dc94" />
 <img width="280" height="35" alt="福宝在85事件后在服内解散江北市截图" src="https://github.com/user-attachments/assets/3c2405bb-2a89-4831-9949-a4672da7f5b6" />
 <img width="388" height="41" alt="福宝在85事件解散江北市后在服内辱骂服务器截图" src="https://github.com/user-attachments/assets/b2336cf1-655a-4517-9f86-d201dede4eb7" />
-<img width="1080" height="2403" alt="福宝在服内etn国家'芝康武装'外插满一圈'服务器大傻逼'告示牌截图" src="https://github.com/user-attachments/assets/f7022cc5-c569-4d3f-94b1-dfdee2476029" />
+<img width="181" height="161" alt="福宝在服内etn城镇插的告示牌截图" src="https://github.com/user-attachments/assets/0c03d073-4781-4987-b710-9394e887a237" />
+<br/>
 <img width="224" height="785" alt="福宝举报服务器Q群截图" src="https://github.com/user-attachments/assets/ec3b5ffc-08aa-44e1-baa3-70779d4bd84a" />
 <img width="255" height="819" alt="福宝举报服务器Q群截图2" src="https://github.com/user-attachments/assets/8a03c9ca-ceca-49f2-b4a5-85e7e5ceba33" />
 <img width="1620" height="2160" alt="福宝给etn的截图" src="https://github.com/user-attachments/assets/04d180a0-4769-45d5-a399-b84a6f28ad6a" />
