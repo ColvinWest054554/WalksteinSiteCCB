@@ -35,7 +35,7 @@
 
 
 <h1>附录：福宝传世经典</h1>
-<img width="406" height="599" alt="福宝在退出共产国际后在Q群对米德大放厥词聊天记录" src="https://github.com/user-attachments/assets/a5e9bbd2-be47-48e1-8d7c-fc53105d6e74" />
+<img width="406" height="599" alt="福宝在退出共产国际后在Q群对米德大放厥词聊天记录" src="https://github.com/user-attachments/assets/a5e9bbd2-be47-48e1-8d7c-fc53105d6e74" /><br/>
 <img width="720" height="6481" alt="沃克斯坦自治区解散事件Q群聊天截图" src="https://github.com/user-attachments/assets/810d3756-bbe0-4571-a6d3-53c9954cf29d" />
 <img width="720" height="7513" alt="沃克斯坦自治区解散事件Q群聊天截图2" src="https://github.com/user-attachments/assets/6e1285ef-a29f-45ab-ae7c-835d1e35e5dd" />
 <img width="720" height="13095" alt="沃克斯坦自治区解散事件Q群聊天截图3" src="https://github.com/user-attachments/assets/1c6523ad-a95e-419d-a161-7c7f9aa372b4" />
