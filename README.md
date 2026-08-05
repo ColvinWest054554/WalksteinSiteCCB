@@ -62,7 +62,7 @@
 <img width="1620" height="2160" alt="福宝给etn的截图" src="https://github.com/user-attachments/assets/04d180a0-4769-45d5-a399-b84a6f28ad6a" />
 
 
-<h2>FP服务器里对福宝的评价</h2>
+<h2>FP服务器里对福宝的评价（来源：FPWiki，FP群聊）</h2>
 
 
 <a href="https://docs.qq.com/aio/DQ0NiT1p5TEdyWVFh" target="_blank">
