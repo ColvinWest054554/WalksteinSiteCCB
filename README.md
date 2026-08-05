@@ -53,8 +53,9 @@
 <img width="2160" height="1620" alt="福宝在论坛事件过后为逃避责任找出在Q群中大伙为用福宝取乐而反串出的一堆'准了'截图" src="https://github.com/user-attachments/assets/05055170-8b89-4c7e-b0c8-7da5e9303e42" />
 <img width="649" height="113" alt="etn在85事件时在服内指责福宝将公有铁路接入自己家截图" src="https://github.com/user-attachments/assets/ce859e52-75f0-4693-8d15-23e6a8e7dc94" />
 <img width="280" height="35" alt="福宝在85事件后在服内解散江北市截图" src="https://github.com/user-attachments/assets/3c2405bb-2a89-4831-9949-a4672da7f5b6" />
-<img width="388" height="41" alt="福宝在85事件解散江北市后在服内辱骂服务器截图" src="https://github.com/user-attachments/assets/b2336cf1-655a-4517-9f86-d201dede4eb7" />
 <img width="181" height="161" alt="福宝在服内etn城镇插的告示牌截图" src="https://github.com/user-attachments/assets/0c03d073-4781-4987-b710-9394e887a237" />
+<img width="388" height="41" alt="福宝在85事件解散江北市后在服内辱骂服务器截图" src="https://github.com/user-attachments/assets/b2336cf1-655a-4517-9f86-d201dede4eb7" />
+
 <br/>
 <img width="224" height="785" alt="福宝举报服务器Q群截图" src="https://github.com/user-attachments/assets/ec3b5ffc-08aa-44e1-baa3-70779d4bd84a" />
 <img width="255" height="819" alt="福宝举报服务器Q群截图2" src="https://github.com/user-attachments/assets/8a03c9ca-ceca-49f2-b4a5-85e7e5ceba33" />
