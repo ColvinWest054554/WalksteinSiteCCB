@@ -57,7 +57,11 @@
 <img width="1080" height="2403" alt="福宝在服内etn国家'芝康武装'外插满一圈'服务器大傻逼'告示牌截图" src="https://github.com/user-attachments/assets/f7022cc5-c569-4d3f-94b1-dfdee2476029" />
 
 <h2>FP服务器里对福宝的评价</h2>
-<img width="584" height="225" alt="https://docs.qq.com/aio/DQ0NiT1p5TEdyWVFh" src="https://github.com/user-attachments/assets/555f2d90-1935-4b5e-876d-a0183b91e10c" />
+
+
+<a href="https://docs.qq.com/aio/DQ0NiT1p5TEdyWVFh" target="_blank">
+  <img width="584" height="225" alt="https://docs.qq.com/aio/DQ0NiT1p5TEdyWVFh" src="https://github.com/user-attachments/assets/555f2d90-1935-4b5e-876d-a0183b91e10c" />
+</a>
 
 
 
