@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FBWAR 国战服 · 实时入口</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;background:linear-gradient(135deg,#0b1e3f 0%,#1a2a5e 50%,#2d1b4e 100%);min-height:100vh;color:#fff;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:36px 32px;max-width:440px;width:92%;backdrop-filter:blur(10px);box-shadow:0 20px 60px rgba(0,0,0,.4)}
+h1{font-size:28px;font-weight:800;letter-spacing:1px;margin-bottom:6px;background:linear-gradient(90deg,#ffd76a,#ff8a5c);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sub{color:#8fa3d8;font-size:13px;margin-bottom:22px}
+.row{background:rgba(0,0,0,.3);border-radius:12px;padding:14px 16px;margin-bottom:12px;position:relative}
+.row .label{font-size:12px;color:#7d92c4;margin-bottom:4px}
+.row .val{font-size:17px;font-weight:700;word-break:break-all}
+.copy{position:absolute;right:14px;top:14px;font-size:12px;background:rgba(255,255,255,.12);border:none;color:#fff;padding:5px 10px;border-radius:8px;cursor:pointer}
+.copy:active{background:rgba(255,255,255,.25)}
+.btn{display:block;text-align:center;background:linear-gradient(90deg,#3b82f6,#6366f1);color:#fff;text-decoration:none;padding:14px;border-radius:12px;font-weight:700;font-size:16px;margin-top:6px}
+.btn:hover{opacity:.9}
+.btn.off{background:linear-gradient(90deg,#4b5563,#6b7280);cursor:not-allowed;opacity:.7}
+.hint{color:#5c6f9e;font-size:12px;margin-top:16px;line-height:1.6}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.g{background:#4ade80;box-shadow:0 0 8px #4ade80}
+.r{background:#f87171;box-shadow:0 0 8px #f87171}
+.y{background:#fbbf24;box-shadow:0 0 8px #fbbf24;animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.3}}
+#clock{font-size:11px;color:#5c6f9e;margin-top:12px}
+a{color:#7dd3fc}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>&#9876; FBWAR</h1>
+<div class="sub">欧亚大陆 · 国战服务器 · 实时状态（每 2 秒自动检测）</div>
+
+<div class="row">
+  <div class="label">&#9889; MC 服务器状态</div>
+  <div class="val" id="mc">检测中...</div>
+</div>
+<div class="row">
+  <div class="label">&#128421; MC 服务器地址</div>
+  <div class="val" id="addr">--</div>
+  <button class="copy" id="copyBtn" onclick="copyAddr()">复制</button>
+</div>
+<div class="row">
+  <div class="label">&#128506; 网页地图</div>
+  <div class="val" id="map">检测中...</div>
+</div>
+<div class="row">
+  <div class="label">&#9203; 上次心跳</div>
+  <div class="val" id="beat">--</div>
+</div>
+
+<div id="mcBtnWrap"></div>
+<div class="hint">本页每次访问都会<b>现场检测</b>服务器与地图的真实状态，不写死、不缓存旧地址。服务器重启或地图断线时，几秒内变红并隐藏失效地址，恢复后自动重新显示。</div>
+<div id="clock">--</div>
+</div>
+
+<script>
+let MC_ADDR = '';
+async function refresh(){
+  try{
+    const r = await fetch('/api/status', { cache: 'no-store' });
+    const s = await r.json();
+
+    const mcEl = document.getElementById('mc');
+    const beatEl = document.getElementById('beat');
+    const addrEl = document.getElementById('addr');
+    const btnWrap = document.getElementById('mcBtnWrap');
+
+    if(s.mcOnline){
+      MC_ADDR = s.addr || '';
+      mcEl.innerHTML = '<span class="dot g"></span>在线';
+      addrEl.textContent = MC_ADDR || '--';
+      beatEl.textContent = (s.beatAgo === null ? '未知' : s.beatAgo + ' 秒前');
+      btnWrap.innerHTML = '<a class="btn" href="minecraft://' + MC_ADDR + '">&#128073; 一键进服</a>';
+    }else{
+      mcEl.innerHTML = '<span class="dot r"></span>离线 / 重启中';
+      addrEl.textContent = '服务器未开启（不显示旧地址）';
+      beatEl.textContent = (s.beatAgo === null ? '从未上报' : s.beatAgo + ' 秒前');
+      btnWrap.innerHTML = '<a class="btn off">服务器维护中</a>';
+    }
+
+    const mapEl = document.getElementById('map');
+    if(s.mapOnline && s.map){
+      mapEl.innerHTML = '<span class="dot g"></span><a href="' + s.map + '" target="_blank">' + s.map + '</a>';
+    }else{
+      mapEl.innerHTML = '<span class="dot r"></span>地图维护中（重新连接后自动恢复）';
+    }
+    document.getElementById('clock').textContent = '服务器时间：' + (s.clock || '');
+  }catch(e){
+    document.getElementById('mc').innerHTML = '<span class="dot y"></span>状态接口连接失败，重试中...';
+  }
+}
+function copyAddr(){
+  if(!MC_ADDR) return;
+  navigator.clipboard.writeText(MC_ADDR).then(function(){
+    document.getElementById('copyBtn').textContent = '已复制';
+    setTimeout(function(){ document.getElementById('copyBtn').textContent = '复制'; }, 1200);
+  });
+}
+refresh();
+setInterval(refresh, 2000);
+</script>
+</body>
+</html>
